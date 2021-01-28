@@ -16,11 +16,20 @@ if(NOT DEFINED ENV{WM_PROJECT_DIR})
     variable has been found)!" )
 endif()
 
-set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ENV{FOAM_USER_APPBIN})
-set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ENV{FOAM_USER_LIBBIN})
+# Dependencies
 
+# CGNS
+set(CGNS_LIB_DIR ${PROJECT_SOURCE_DIR}/../dependencies/build/CGNS/src)
+set(CGNS_INC_DIR ${PROJECT_SOURCE_DIR}/../dependencies/CGNS/src)
+
+
+# Set the outputs for the OpenFOAM application and libraires
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY $ENV{FOAM_USER_APPBIN})
+set( CMAKE_LIBRARY_OUTPUT_DIRECTORY $ENV{FOAM_USER_LIBBIN})
+
+# Things to compile
 add_subdirectory(functionObjects)
-
+add_subdirectory(applications)
 
 add_custom_target(
     copy-compile-commands ALL

@@ -1,0 +1,4 @@
+[submodule "dependencies/CGNS"]
+	path = dependencies/CGNS
+	url = https://github.com/CGNS/CGNS.git
+	branch = master
