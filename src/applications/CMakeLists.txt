@@ -1,1 +1,6 @@
 add_subdirectory(cgnsToFoam)
+add_subdirectory(distortBoundaryMesh)
+add_subdirectory(splitByRegion)
+add_subdirectory(cleanUpMirroredMesh)
+add_subdirectory(renumberCoupledPatches)
+add_subdirectory(orthoQuality)
