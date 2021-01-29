@@ -1,6 +1,7 @@
 set(SOURCES 
   turbulentKineticEnergy/turbulentKineticEnergy.C
   explicitLaplaceFilter/explicitLaplaceFilter.C
+  trueExplicitFilter/SphericalFilter.h
   )
 
 add_library(userFunctionObjects SHARED ${SOURCES})
