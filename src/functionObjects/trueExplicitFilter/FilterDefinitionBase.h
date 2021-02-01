@@ -17,10 +17,10 @@ class FilterDefinitionBase
   //Protected
     protected:
       // Center of the filter
-      const vector center_;
+      vector center_;
       
       // The width of the filter 
-      const scalar width_;
+      scalar width_;
 
   // Public
     public:

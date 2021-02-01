@@ -29,7 +29,7 @@ class SphericalFilter
       virtual scalar G(const vector& evaluation_point) const
       {
         return mag(evaluation_point - center_) < (width_ / 2)
-          ? 6.0 / (Foam::constant::mathematical::pi * Foam::pow(width_,3))
+          ? 1
           : 0;
       }
 

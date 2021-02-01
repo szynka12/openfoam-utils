@@ -2,6 +2,10 @@
 #define SPHERICALEXPLICITFILTER_H
 
 #include "fvMeshFunctionObject.H"
+#include "fvPatchField.H"
+#include "GeometricField.H"
+#include "SphericalFilter.h"
+#include "FilterBase.h"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -14,13 +18,15 @@ namespace functionObjects
                    Class explicitLaplaceFilter Declaration
 \*---------------------------------------------------------------------------*/
 
-class SphericalExplicitFilter 
+class trueExplicitFilter 
 :
     public fvMeshFunctionObject
 {
     // Private Data
-
-
+        const List<word> fields_;
+        
+      
+        List<filters::FilterBase<filters::SphericalFilter>> filterList_;
     // Helper functions
 
         //- Add mean average field to database
@@ -37,13 +43,13 @@ class SphericalExplicitFilter
 public:
 
     //- Runtime type information
-    TypeName("SphericalExplicitFilter");
+    TypeName("trueExplicitFilter");
 
 
     // Constructors
 
         //- Construct from Time and dictionary
-        SphericalExplicitFilter
+        trueExplicitFilter
         (
             const word& name,
             const Time& runTime,
@@ -51,14 +57,14 @@ public:
         );
 
         //- No copy construct
-        SphericalExplicitFilter(const SphericalExplicitFilter&) = delete;
+        trueExplicitFilter(const trueExplicitFilter&) = delete;
 
         //- No copy assignment
-        void operator=(const SphericalExplicitFilter&) = delete;
+        void operator=(const trueExplicitFilter&) = delete;
 
 
     //- Destructor
-    virtual ~SphericalExplicitFilter() = default;
+    virtual ~trueExplicitFilter() = default;
 
 
     // Member Functions
@@ -77,7 +83,7 @@ public:
 };
 
 template<class Type>
-void SphericalExplicitFilter::addMeanField(const word& field_name)
+void trueExplicitFilter::addMeanField(const word& field_name)
 {
   typedef GeometricField<Type, fvPatchField, volMesh> VolFieldType;
 
@@ -110,7 +116,7 @@ void SphericalExplicitFilter::addMeanField(const word& field_name)
                   IOobject::NO_READ,
                   IOobject::NO_WRITE
               ),
-              1*base_field
+              1.0*base_field
           )
       );
 
@@ -118,7 +124,7 @@ void SphericalExplicitFilter::addMeanField(const word& field_name)
 }
 
 template<class Type>
-void SphericalExplicitFilter::writeField( const word& fieldName ) const
+void trueExplicitFilter::writeField( const word& fieldName ) const
 {
     typedef GeometricField<Type, fvPatchField, volMesh> VolFieldType;
 
@@ -131,9 +137,27 @@ void SphericalExplicitFilter::writeField( const word& fieldName ) const
 }
 
 template<class Type>
-void SphericalExplicitFilter::filterField( const word& fieldName ) const
+void trueExplicitFilter::filterField( const word& fieldName ) const
 {
     typedef GeometricField<Type, fvPatchField, volMesh> VolFieldType;
+    
+    if (foundObject<VolFieldType>(fieldName))
+    {
+
+      const VolFieldType& f_original = lookupObject<VolFieldType>(fieldName);
+      
+      VolFieldType& f_filtered 
+        = obr().lookupObjectRef<VolFieldType>(fieldName + "Filtered");
+      
+      for(label celli = 0; celli < mesh_.nCells(); celli++)
+      {
+          f_filtered[celli] 
+            = filterList_[celli].localConvolution<Type>(f_original);
+      }
+
+      f_filtered.correctBoundaryConditions();
+    
+    }
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
