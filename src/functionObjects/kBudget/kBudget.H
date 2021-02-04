@@ -38,7 +38,7 @@ public:
     TypeName("kBudget");
 
     static word productionName;
-    static word turbulentDissipationName;
+    static word turbulentDiffusionName;
     static word velocityPressureName;
     static word molecularDiffusionName;
     static word dissipationName;
@@ -62,6 +62,9 @@ public:
 
     //- Destructor
     virtual ~kBudget() = default;
+        
+    //- Write the result field
+    virtual bool write();
 };
 
 

@@ -1,0 +1,344 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2006                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+FTT    #eval{ 2*pi()/0.1375 };
+FTT2   #eval{ 2*$FTT };
+FTT2   #eval{ 2*$FTT };
+FTT3   #eval{ 3*$FTT };
+FTT4   #eval{ 4*$FTT };
+FTT5   #eval{ 5*$FTT };
+FTT6   #eval{ 6*$FTT };
+FTT10  #eval{ 10*$FTT };
+FTT20  #eval{ 20*$FTT };
+FTT40  #eval{ 40*$FTT };
+FTT60  #eval{ 60*$FTT };
+FTT80  #eval{ 80*$FTT };
+
+END #eval{$FTT40};
+
+libs ( userFunctionObjects );
+
+application     pimpleFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         $END;
+
+deltaT          0.03;
+
+writeControl    adjustableRunTime;
+
+//writeInterval   $FTT10;
+writeInterval   1;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   12;
+
+runTimeModifiable true;
+
+adjustTimeStep  false;
+
+maxCo           0.6;
+
+// Allow 20% run-up before calculating mean
+
+functionObjSettings
+{
+    timeStart       0;
+    writeControl    writeTime;
+}
+
+functions
+{
+    VelocityPressureAverage
+    {
+        type            fieldAverage;
+        libs            (fieldFunctionObjects);
+        
+        ${/functionObjSettings};
+
+        fields
+        (
+            U
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+            p
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+        );
+    }
+    
+    kBudgetCorrelations
+    {
+        type    kBudgetCorrelations;
+        libs    (userFunctionObjects);
+        ${/functionObjSettings};
+    }
+    
+    CorelationsAverage
+    {
+        type            fieldAverage;
+        libs            (fieldFunctionObjects);
+        
+        ${/functionObjSettings};
+
+        fields
+        (
+            dissipationCorrelation  
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+            turbulentDiffusionCorrelation
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+
+            reynoldsStressTensor
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+            
+            velocityPressureGradientCorrelation
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+        );
+    }
+
+    kBudget
+    {
+        type    kBudget;
+        libs    (userFunctionObjects);
+        ${/functionObjSettings};
+        executeControl writeTime;
+    }
+
+    //strain1
+    //{
+        //type            strain;
+        //libs            (fieldFunctionObjects);
+        //writeControl    writeTime;
+    //}
+    //fieldAverage1
+    //{
+        //type            fieldAverage;
+        //libs            (fieldFunctionObjects);
+        //writeControl    writeTime;
+        //timeStart       ${/timeStart};
+        //fields
+        //(
+            //U
+            //{
+                //mean        on;
+                //prime2Mean  on;
+                //base        time;
+            //}
+            //p
+            //{
+                //mean        on;
+                //prime2Mean  on;
+                //base        time;
+            //}
+            //strain 
+            //{
+                //mean        on;
+                //prime2Mean  off;
+                //base        time;
+            //}
+        //);
+    //}
+    //turbKinEn1
+    //{
+        //type            turbKinEn;
+        //libs            (fieldFunctionObjects);
+        //writeControl    writeTime;
+    //}
+    //pressureVelocity1
+    //{
+        //type            pressureVelocity;
+        //libs            (fieldFunctionObjects);
+        //writeControl    writeTime;
+    //}
+    //velocityVelocity1
+    //{
+        //type            velocityVelocity;
+        //libs            (fieldFunctionObjects);
+        //writeControl    writeTime;
+    //}
+    //fluctuatingStain1
+    //{
+        //type            fluctuatingStrain;
+        //libs            (fieldFunctionObjects);
+        //writeControl    writeTime;
+    //}
+    //velocityFluctuatingStrain1
+    //{
+        //type            velocityFluctuatingStrain;
+        //libs            (fieldFunctionObjects);
+        //writeControl    writeTime;
+    //}
+    //dissipation1
+    //{
+        //type            dissipation;
+        //libs            (fieldFunctionObjects);
+        //writeControl    writeTime;
+    //}
+    //dissipationFromUPrim1
+    //{
+        //type            dissipationFromUPrim;
+        //libs            (fieldFunctionObjects);
+        //writeControl    writeTime;
+    //}
+    //pseudoDissipation1
+    //{
+        //type            pseudoDissipation;
+        //libs            (fieldFunctionObjects);
+        //writeControl    writeTime;
+    //}
+    //vorticity1
+    //{
+        //type            vorticity;
+        //libs            (fieldFunctionObjects);
+        //writeControl    writeTime;
+    //}
+    //yPlus
+    //{
+        //type            yPlus;
+        //libs            (fieldFunctionObjects);
+        //executeControl  writeTime;
+        //writeControl    writeTime;
+    //}
+    //cellCentres
+    //{
+        //type            writeCellCentres;
+        //libs            (fieldFunctionObjects);
+        //executeControl  onEnd;
+        //writeControl    onEnd;
+    //}
+    //wallShearStress1
+    //{
+        //type        wallShearStress;
+        //libs        (fieldFunctionObjects);
+        //writeControl writeTime;
+        //patches     (bottomWall);
+    //}
+    //grad1
+    //{
+        //type            grad;
+        //libs            (fieldFunctionObjects);
+        //field           UMean;
+        //result          gradUMean;
+        //executeControl  writeTime;
+        //writeControl    writeTime;
+    //}
+    //fieldAverage2
+    //{
+        //type            fieldAverage;
+        //libs            (fieldFunctionObjects);
+        //writeControl    writeTime;
+        //timeStart       ${/timeStart};
+        //fields
+        //(
+            //vorticity 
+            //{
+                //mean        on;
+                //prime2Mean  on;
+                //base        time;
+            //}
+            //turbKinEn 
+            //{
+                //mean        on;
+                //prime2Mean  off;
+                //base        time;
+            //}
+            //pressureVelocity 
+            //{
+                //mean        on;
+                //prime2Mean  off;
+                //base        time;
+            //}
+            //velocityVelocity 
+            //{
+                //mean        on;
+                //prime2Mean  off;
+                //base        time;
+            //}
+            //dissipation 
+            //{
+                //mean        on;
+                //prime2Mean  off;
+                //base        time;
+            //}
+            //dissipationFromUPrim 
+            //{
+                //mean        on;
+                //prime2Mean  off;
+                //base        time;
+            //}
+            //pseudoDissipation 
+            //{
+                //mean        on;
+                //prime2Mean  off;
+                //base        time;
+            //}
+            //velocityFluctuatingStrain 
+            //{
+                //mean        on;
+                //prime2Mean  off;
+                //base        time;
+            //}
+            //wallShearStress 
+            //{
+                //mean        on;
+                //prime2Mean  off;
+                //base        time;
+            //}
+        //);
+    //}
+
+    /* #include surfaceSamplingDict; */
+}
+
+
+// ************************************************************************* //

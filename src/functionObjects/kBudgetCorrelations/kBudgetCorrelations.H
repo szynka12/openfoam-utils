@@ -62,6 +62,10 @@ public:
 
     //- Destructor
     virtual ~kBudgetCorrelations() = default;
+
+
+        //- Write the result field
+        virtual bool write();
 };
 
 

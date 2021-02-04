@@ -16,7 +16,7 @@ namespace functionObjects
     addToRunTimeSelectionTable(functionObject, kBudget, dictionary);
 
     word kBudget::productionName = "production";
-    word kBudget::turbulentDissipationName = "turbulentDissipation";
+    word kBudget::turbulentDiffusionName = "turbulentDiffusion";
     word kBudget::velocityPressureName  = "velocityPressureGradient";
     word kBudget::molecularDiffusionName  = "molecularDiffusion";
     word kBudget::dissipationName = "dissipation";
@@ -34,6 +34,7 @@ bool Foam::functionObjects::kBudget::calc()
         && foundObject<volVectorField>(fieldName_ + "Mean")
        )
     {
+        Foam::Info << "    Calculating the TKE budget fields..." << Foam::endl;
         const volVectorField& UMean 
           = lookupObject<volVectorField>(fieldName_ + "Mean");
         
@@ -54,7 +55,7 @@ bool Foam::functionObjects::kBudget::calc()
               );
 
         result = result 
-          && store<volScalarField>(turbulentDissipationName, 
+          && store<volScalarField>(turbulentDiffusionName, 
               fvc::div(turbulentDiffusionCorrelationMean));
 
         const volScalarField& velPressGradCor
@@ -113,6 +114,16 @@ Foam::functionObjects::kBudget::kBudget
     );
 
     transportProperties.readEntry("nu", nu);
+}
+
+//- Write the result field
+bool Foam::functionObjects::kBudget::write()
+{
+  return writeObject(productionName) 
+    && writeObject(turbulentDiffusionName)
+    && writeObject(velocityPressureName)
+    && writeObject(molecularDiffusionName)
+    && writeObject(dissipationName);
 }
 
 

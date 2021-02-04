@@ -59,10 +59,13 @@ bool Foam::functionObjects::kBudgetCorrelations::calc()
     if (   
            foundObject<volVectorField>(fieldName_) 
         && foundObject<volVectorField>(fieldName_ + "Mean")
-        && foundObject<volVectorField>(pressureFieldName_ )
-        && foundObject<volVectorField>(pressureFieldName_  + "Mean")
+        && foundObject<volScalarField>(pressureFieldName_ )
+        && foundObject<volScalarField>(pressureFieldName_  + "Mean")
        )
     {
+        Foam::Info << "    Calculating the fields necessary for the corraltions" 
+                   << Foam::endl;
+
         const volVectorField& U = lookupObject<volVectorField>(fieldName_);
         const volVectorField& UMean 
           = lookupObject<volVectorField>(fieldName_ + "Mean");
@@ -71,9 +74,9 @@ bool Foam::functionObjects::kBudgetCorrelations::calc()
         const volScalarField& PMean 
           = lookupObject<volScalarField>(pressureFieldName_ + "Mean");
         
-        const tmp<volVectorField> UPrim(U - UMean);
-        const tmp<volScalarField> PPrim(P - PMean);
-        const tmp<volTensorField> gradUPrim(fvc::grad(UPrim));
+        const volVectorField UPrim = (U - UMean)();
+        const volScalarField PPrim = (P - PMean)();
+        const volTensorField gradUPrim = (fvc::grad(UPrim))();
 
         bool result = true;
         result = result 
@@ -112,5 +115,15 @@ Foam::functionObjects::kBudgetCorrelations::kBudgetCorrelations
     pressureFieldName_(dict.lookupOrDefault<word>("pressure", "p"))
 {}
 
+
+
+//- Write the result field
+bool Foam::functionObjects::kBudgetCorrelations::write()
+{
+  return writeObject(reynoldsStressTensorName) 
+    && writeObject(turbulentDiffusionCorrelationName)
+    && writeObject(velocityPressureCorrelationName)
+    && writeObject(dissipationCorrelationName);
+}
 
 // ************************************************************************* //
