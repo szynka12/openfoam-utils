@@ -32,7 +32,7 @@ spanwise 2;
 h 1.0;
 
 // Set (overwrite) velocity to laminar profile
-setBulk false;
+setBulk true;
 
 // Perturb velocity with some cosine like perturbations
 perturb true;

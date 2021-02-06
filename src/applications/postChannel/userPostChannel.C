@@ -70,6 +70,8 @@ int main(int argc, char *argv[])
     #include "createNamedMesh.H"
     #include "readTransportProperties.H"
 
+    dimensionedScalar nu("nu", dimViscosity, transportProperties);
+
     const word& gFormat = runTime.graphFormat();
 
     // Setup channel indexing for averaging over channel down to a line
