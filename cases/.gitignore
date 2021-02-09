@@ -9,6 +9,8 @@ processor*
 constant/extendedFeatureEdgeMesh
 *.eMesh
 constant/polyMesh/*
+*/polyMesh/*
+
 constant/cellToRegion
 
 #Keep original boundary conditions

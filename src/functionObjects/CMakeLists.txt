@@ -4,12 +4,14 @@ set(SOURCES
   trueExplicitFilter/trueExplicitFilter.cpp
   kBudgetCorrelations/kBudgetCorrelations.C
   kBudget/kBudget.C
+  cellExplicitFilter/cellExplicitFilter.cpp
   )
 
 add_library(userFunctionObjects SHARED ${SOURCES})
 
 target_include_directories(userFunctionObjects PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/filters
   $ENV{FOAM_SRC}/OpenFOAM/lnInclude
   $ENV{FOAM_SRC}/OSspecific/POSIX/lnInclude
   $ENV{FOAM_SRC}/functionObjects/field/lnInclude
