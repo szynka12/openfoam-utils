@@ -4,5 +4,5 @@ set term pdf
 set output "kbal".time.".pdf"
 set logscale x
 
-plot time."/P_ii.xy" u 1:2 t "Production, OF" ,\
-  "chan395.kbal" u 2:4 t "Production, chan395"
+plot time."/P_ii.xy" u 1:($2*300) t "Production, OF", \
+  "chan395.kbal" u 2:4 t "Production, chan395" with lines lc rgb "black"
