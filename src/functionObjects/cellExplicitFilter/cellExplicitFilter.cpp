@@ -29,9 +29,20 @@ Foam::functionObjects::cellExplicitFilter::cellExplicitFilter
     target_time_(
         runTime.rootPath()/runTime.caseName()/runTime.constant(),
         dict.getOrDefault<string>("targetMesh", "targetMesh")),
-    mesh_ptr_(nullptr)
+    mesh_ptr_(nullptr),
+    divide_by_volume_(true),
+    write_volume_field_(dict.getOrDefault("writeFilterVolume", false))
 {
+    // check the switches
     
+    is_parallel_ = Pstream::parRun();
+
+    if (is_parallel_)
+    {
+      divide_by_volume_ = false;
+      write_volume_field_ = true;
+    }
+
     // read the other mesh here or in the initialisation
     Foam::Info << Foam::nl 
                <<"    cellFilter: Reading target mesh..."  
@@ -57,48 +68,60 @@ Foam::functionObjects::cellExplicitFilter::cellExplicitFilter
 
     filterList_.resize(n_taget_cells);
 
-    using FilterType = filters::UnstructuredMeshFilter<filters::CellFilter>;
-
+    
+    // Set the definition for the filter
     for (label celli = 0; celli < n_taget_cells; celli++)
     {
       filterList_[celli].set_definition(filters::CellFilter(celli, mesh_ptr_)); 
-
-      filterList_[celli].initialise(mesh_);
     }
 
-    // write filter volumes if options selected in the dict
-    if (dict.getOrDefault("writeFilterVolume", false))
-    {
-      Info << "    cellFilter: Computing filter volume..." << endl;
-      mesh_ptr_->thisDb().store
-      (
-          new volScalarField
-          (
-              IOobject
-              (
-                  "FilterVolume",
-                  mesh_ptr_->thisDb().time().timeName(0),
-                  mesh_ptr_->thisDb(),
-                  IOobject::NO_READ,
-                  IOobject::NO_WRITE
-              ),
-              mesh_ptr_(),
-              dimensioned<scalar>(dimVol, Zero)
-          )
-      );
-      
-      volScalarField& V
-        = mesh_ptr_->thisDb().lookupObjectRef<volScalarField>("FilterVolume");
-      
-      for(label celli = 0; celli < mesh_ptr_->nCells(); celli++)
-      {
-          V[celli] = filterList_[celli].V(); 
-      }
+    
+    Info << "    cellFilter: Computing filter volume and stencils..." << endl;
 
-      V.correctBoundaryConditions();
-      
+    for (label celli = 0; celli < n_taget_cells; celli++)
+    {
+      filterList_[celli].initialise(mesh_);
+    }
+    
+    Info << "    cellFilter: Done!" << endl;
+    
+    // If we are parallel then volume will be saved in constant so we will know
+    // that it is neccesary for reconstruction
+    fileName volume_path;
+    if (is_parallel_)
+    {
+      volume_path = mesh_ptr_->thisDb().time().constant();
+    }
+    else
+    {
+      volume_path = mesh_ptr_->thisDb().time().timeName(0);
+    }
+
+    
+    auto volume_field_header = IOobject("FilterVolume", volume_path,
+                mesh_ptr_->thisDb(), IOobject::NO_READ, IOobject::NO_WRITE);
+
+    mesh_ptr_->thisDb().store(
+        new volScalarField(
+          volume_field_header,mesh_ptr_(), dimensioned<scalar>(dimless, Zero))
+    );
+    
+    // Fill the volume field
+    volScalarField& V
+      = mesh_ptr_->thisDb().lookupObjectRef<volScalarField>("FilterVolume");
+    
+    for(label celli = 0; celli < mesh_ptr_->nCells(); celli++)
+    {
+        V[celli] = filterList_[celli].V(); 
+    }
+
+    V.correctBoundaryConditions();
+    
+    
+    // write filter volumes if options selected in the dict
+    if (write_volume_field_ || is_parallel_)
+    {
       Info << "    cellFilter: Writing filter volume..." << nl <<endl;;
-      
       V.write();
     }
 

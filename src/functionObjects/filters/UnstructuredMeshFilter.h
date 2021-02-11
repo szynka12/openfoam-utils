@@ -91,20 +91,31 @@ namespace filters
 
     template<class Type>
     Type localConvolution( 
-        const GeometricField<Type, fvPatchField, volMesh>& field ) const
+        const GeometricField<Type, fvPatchField, volMesh>& field, 
+        const bool divide_by_volume = true ) const
     {
       Type value(Zero);
       forAll(weights_, i) { value += weights_[i] * field[cells_[i]]; }
-      return value/(volume_ + SMALL);
+      
+      if (divide_by_volume)
+        value /= (volume_ + SMALL);
+      
+      return value;
     }
     
     template<class Type>
-    Type localConvolution( const Type uniform_value ) const
+    Type localConvolution(
+        const Type uniform_value, const bool divide_by_volume = true) const
     {
       Type value(Zero);
       forAll(weights_, i) { value += weights_[i] * uniform_value; }
-      return value/(volume_ + SMALL);
+      
+      if (divide_by_volume)
+        value /= (volume_ + SMALL);
+      
+      return value;
     }
+    
 
   };
 

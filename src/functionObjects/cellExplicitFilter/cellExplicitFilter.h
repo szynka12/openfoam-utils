@@ -7,6 +7,7 @@
 #include "Time.H"
 #include "UnstructuredMeshFilter.h"
 #include "CellFilter.h"
+#include "Pstream.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -24,13 +25,25 @@ class cellExplicitFilter
     public fvMeshFunctionObject
 {
     // Private Data
+    
+        using FilterType = filters::UnstructuredMeshFilter<filters::CellFilter>;
+    
+        // List of fields that needs to be filtered
         const List<word> fields_;
-  
+        
+        // Time of the target mesh
         mutable Foam::Time target_time_;
-
+        
+        // Target mesh
         Foam::autoPtr<Foam::fvMesh> mesh_ptr_;
         
-        List<filters::UnstructuredMeshFilter<filters::CellFilter>> filterList_;
+        // List of filters for each cell of target mesh
+        List<FilterType> filterList_;
+
+        // Switches
+        bool divide_by_volume_;
+        bool write_volume_field_;
+        bool is_parallel_;
         
     // Helper functions
 
@@ -140,7 +153,19 @@ void cellExplicitFilter::writeField( const word& fieldName ) const
       
     if (mesh_ptr_->foundObject<VolFieldType>(fieldName))
     {
-        const VolFieldType& f = mesh_ptr_->lookupObject<VolFieldType>(fieldName);
+        VolFieldType& f = mesh_ptr_->lookupObjectRef<VolFieldType>(fieldName);
+        
+        if (divide_by_volume_)
+        {
+          const volScalarField& V 
+            = mesh_ptr_->lookupObject<volScalarField>("FilterVolume");
+          
+          for(label celli = 0; celli < mesh_ptr_->nCells(); celli++)
+          {            
+            f[celli] =  f[celli] * ( 1.0 / (V[celli] + SMALL) );
+          }
+        }
+
         f.write();
     }
     
@@ -154,7 +179,7 @@ void cellExplicitFilter::filterField( const word& fieldName ) const
     
     if (foundObject<VolFieldType>(fieldName))
     {
-      Info << "   cellFilter: Filtering field " << fieldName << endl;
+      Info << "    cellFilter: Filtering field " << fieldName << endl;
 
       const VolFieldType& f_original = lookupObject<VolFieldType>(fieldName);
       
@@ -164,7 +189,7 @@ void cellExplicitFilter::filterField( const word& fieldName ) const
       for(label celli = 0; celli < mesh_ptr_->nCells(); celli++)
       {
           f_filtered[celli] 
-            = filterList_[celli].localConvolution<Type>(f_original);
+            = filterList_[celli].localConvolution<Type>(f_original, false);
       }
 
       f_filtered.correctBoundaryConditions();
