@@ -42,9 +42,22 @@ class CellFilter
         return target_mesh_->pointInCell(evaluation_point, cell_);
       }
 
+      virtual inline boundBox bounding_box() const 
+      {
+        auto cell = target_mesh_->cellPoints(cell_);
+        List< point > points(cell.size());
+        forAll(cell, celli) { points[celli] = target_mesh_->points()[celli]; }
+        return boundBox(points);
+      }
+
       virtual inline scalar G(const vector& evaluation_point) const
       {
         return 1;
+      }
+
+      virtual vector center()
+      {
+        return target_mesh_->cellCentres()[cell_];
       }
 
       // copy assignment

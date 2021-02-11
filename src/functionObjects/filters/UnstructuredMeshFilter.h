@@ -7,7 +7,8 @@
 #include "GeometricField.H"
 #include "fvMesh.H"
 #include "List.H"
-
+#include "FIFOStack.H"
+#include "meshSearch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -34,6 +35,31 @@ namespace filters
 
     scalar volume_;
 
+    void add_cell(const label cell, const vector point, const scalar volume)
+    {
+        weights_.append(FilterDefinition::G(point) * volume);
+        cells_.append(cell);
+        volume_ += volume;
+    }
+
+    void add_to_queue(const label cell, FIFOStack<label>& stack, 
+        boolList& marked)
+    {
+      if (!marked[cell])
+      {
+        marked[cell] = true;
+        stack.push(cell);
+      }
+    }
+
+    void add_cell_nei_to_queue(const label cell, const labelListList& cell_nei,
+        FIFOStack<label>& stack, boolList& marked)
+    {
+      forAll(cell_nei[cell], ni)
+      {
+        add_to_queue(cell_nei[cell][ni], stack, marked);
+      }
+    }
 
     public:
 
@@ -72,22 +98,87 @@ namespace filters
 
     void initialise(const fvMesh& mesh)
     {
+      // Check if the mesh is even overlaping with the filter. We need two
+      // bounding boxes for that and ceck for overlap. If it is not there, then
+      // we have no need to check further. This should only make parallel run
+      // faster and serial run slightly slower.
+      if (!FilterDefinition::bounding_box().overlaps(mesh.bounds()))
+        return;
+      
+      const vectorField& cell_centres = mesh.cellCentres();
+      const scalarField& cell_volumes = mesh.cellVolumes();
+
+      const auto& cell_nei = mesh.cellCells();
+
+      // Loop over the cells to find a first cell (or do a tree search) that is 
+      // actually in range.
+      // Than insert it's neighbours into the FIFO stack. With that we loop over
+      // the stack inserting the neighbours, until there are no left.
+      FIFOStack<label> cells_queue;
+      boolList queued_cells(mesh.nCells(), false);
+      
+      /*
       for (label celli = 0; celli < mesh.nCells(); celli++)
       {
-        const vector& evaluation_point = mesh.cellCentres()[celli];
-        const scalar V = mesh.cellVolumes()[celli];
+        const vector& evaluation_point = cell_centres[celli];
 
         if (FilterDefinition::in_range(evaluation_point))
         {
-          weights_.append(
-              FilterDefinition::G(evaluation_point) * V);
+          add_cell(celli, evaluation_point, cell_volumes[celli]);
           
-          cells_.append(celli);
+          //mark this cell as queued
+          queued_cells[celli] = true;
+          add_cell_nei_to_queue(celli, cell_nei, cells_queue, queued_cells);
+          break;
+        }
+      }
+      */
 
-          volume_ += V;
+      // Alternatively we use findCell function
+      /*
+      label celli = mesh.findCell(FilterDefinition::center());
+      
+      if (celli == -1 )
+        return;
+      
+      //mark this cell as queued
+      queued_cells[celli] = true;
+      add_cell(celli, cell_centres[celli], cell_volumes[celli]);
+      add_cell_nei_to_queue(celli, cell_nei, cells_queue, queued_cells);
+      */
+      
+      // So, I have no idea how that will scale, it seems that it is bullshit
+      // slow in parallel cases, and looping over the whole mesh is just faster.
+      // It might be due to communication but I am unsure why. Let's see how it
+      // will scale.
+      meshSearch ms(mesh);
+      
+      label celli = ms.findNearestCell(FilterDefinition::center());
+      
+      if (celli == -1 )
+        return;
+      
+      //mark this cell as queued
+      queued_cells[celli] = true;
+      add_cell(celli, cell_centres[celli], cell_volumes[celli]);
+      add_cell_nei_to_queue(celli, cell_nei, cells_queue, queued_cells);
+
+
+      
+      while(cells_queue.size() != 0)
+      {
+        label celli = cells_queue.pop();
+
+        const vector& evaluation_point = cell_centres[celli];
+
+        if (FilterDefinition::in_range(evaluation_point))
+        {
+          add_cell(celli, evaluation_point, cell_volumes[celli]);
+          add_cell_nei_to_queue(celli, cell_nei, cells_queue, queued_cells);
         }
       }
     }
+
 
     template<class Type>
     Type localConvolution( 
