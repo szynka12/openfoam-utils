@@ -25,4 +25,4 @@ constant/cellToRegion
 
 # keep whatever is in the results folder
 !results/
-!graphs/
+!graphs/*
