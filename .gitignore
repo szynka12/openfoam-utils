@@ -39,3 +39,9 @@ CMakeFiles/
 Makefile
 CMakeCache.txt
 dependencies/build
+
+# paraview
+*.pvsm
+
+# gmsh
+*.msh

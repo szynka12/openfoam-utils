@@ -9,8 +9,6 @@ processor*
 constant/extendedFeatureEdgeMesh
 *.eMesh
 constant/polyMesh/*
-*/polyMesh/*
-
 constant/cellToRegion
 
 #Keep original boundary conditions
@@ -27,4 +25,4 @@ constant/cellToRegion
 
 # keep whatever is in the results folder
 !results/
-!graphs/*
+!graphs/
