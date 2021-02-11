@@ -11,7 +11,9 @@
     UMeanValues = UMeanValues / u_tau;
     y = y * u_tau / nu;
 
-    scalar N = nu * nu / Foam::pow(u_tau, 4.0);
+    scalar N = Foam::pow(u_tau, 4.0) / (nu);
+
+
     
     scalarField productionValues(channelIndexing.collapse(production) / N);
     scalarField dissipationValues(channelIndexing.collapse(dissipation) / N);
