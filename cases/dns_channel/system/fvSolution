@@ -21,7 +21,7 @@ solvers
     {
         solver          GAMG;
         tolerance       0;
-        relTol          0.01;
+        relTol          0.1;
         smoother        DIC;
 	      nPreSweeps      	1;              
     	  nPostSweeps     	2;              
