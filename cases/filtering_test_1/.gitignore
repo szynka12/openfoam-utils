@@ -1,0 +1,28 @@
+*.gz
+log.*
+postProcessing
+*~
+processor*
+0
+[0-9]*
+[0-9]*.[0-9]*
+constant/extendedFeatureEdgeMesh
+*.eMesh
+constant/polyMesh/*
+constant/cellToRegion
+
+#Keep original boundary conditions
+!0.org
+
+# ParaView
+*.OpenFOAM
+*.foam
+
+# keep the scripts and gnuplot files
+!*.sh
+!*.plt
+!*.png
+
+# keep whatever is in the results folder
+!results/
+!graphs/
