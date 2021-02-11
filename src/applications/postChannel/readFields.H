@@ -15,7 +15,7 @@
     IOobject vpgHeader(
         "velocityPressureGradient", runTime.timeName(), mesh, IOobject::MUST_READ);
     if (check_header<volScalarField>(vpgHeader)) {continue;}
-    volScalarField vpg(dissipationHeader, mesh);
+    volScalarField vpg(vpgHeader, mesh);
 
     IOobject molDiffHeader(
         "molecularDiffusion", runTime.timeName(), mesh, IOobject::MUST_READ);
