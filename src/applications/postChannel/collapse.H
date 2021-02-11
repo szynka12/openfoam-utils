@@ -10,12 +10,14 @@
     // normalise U
     UMeanValues = UMeanValues / u_tau;
     y = y * u_tau / nu;
+
+    scalar N = nu * nu / Foam::pow(u_tau, 4.0);
     
-    scalarField productionValues(channelIndexing.collapse(production));
-    scalarField dissipationValues(channelIndexing.collapse(dissipation));
-    scalarField vpgValues(channelIndexing.collapse(vpg));
-    scalarField molDiffValues(channelIndexing.collapse(molDiff));
-    scalarField turbDiffValues(channelIndexing.collapse(turbDiff));
+    scalarField productionValues(channelIndexing.collapse(production) / N);
+    scalarField dissipationValues(channelIndexing.collapse(dissipation) / N);
+    scalarField vpgValues(channelIndexing.collapse(vpg) / N);
+    scalarField molDiffValues(channelIndexing.collapse(molDiff) / N);
+    scalarField turbDiffValues(channelIndexing.collapse(turbDiff) / N);
     
 
 
