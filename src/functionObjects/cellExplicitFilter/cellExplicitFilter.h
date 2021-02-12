@@ -8,6 +8,7 @@
 #include "UnstructuredMeshFilter.h"
 #include "CellFilter.h"
 #include "Pstream.H"
+#include "meshSearch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -179,8 +180,8 @@ void cellExplicitFilter::filterField( const word& fieldName ) const
     
     if (foundObject<VolFieldType>(fieldName))
     {
-      Info << "    cellFilter: Filtering field " << fieldName << endl;
-
+      
+      Info << "                Filtering field " << fieldName << endl;
       const VolFieldType& f_original = lookupObject<VolFieldType>(fieldName);
       
       VolFieldType& f_filtered 

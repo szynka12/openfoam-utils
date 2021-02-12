@@ -96,8 +96,11 @@ namespace filters
       FilterDefinition::operator=(def);
     }
 
-    void initialise(const fvMesh& mesh)
+    //void initialise(const fvMesh& mesh)
+    void initialise(const meshSearch& ms)
     {
+      const polyMesh& mesh = ms.mesh();
+
       // Check if the mesh is even overlaping with the filter. We need two
       // bounding boxes for that and ceck for overlap. If it is not there, then
       // we have no need to check further. This should only make parallel run
@@ -151,7 +154,6 @@ namespace filters
       // slow in parallel cases, and looping over the whole mesh is just faster.
       // It might be due to communication but I am unsure why. Let's see how it
       // will scale.
-      meshSearch ms(mesh);
       
       label celli = ms.findNearestCell(FilterDefinition::center());
       
@@ -162,8 +164,6 @@ namespace filters
       queued_cells[celli] = true;
       add_cell(celli, cell_centres[celli], cell_volumes[celli]);
       add_cell_nei_to_queue(celli, cell_nei, cells_queue, queued_cells);
-
-
       
       while(cells_queue.size() != 0)
       {

@@ -77,10 +77,10 @@ Foam::functionObjects::cellExplicitFilter::cellExplicitFilter
 
     
     Info << "    cellFilter: Computing filter volume and stencils..." << endl;
-
+    meshSearch ms(mesh_);
     for (label celli = 0; celli < n_taget_cells; celli++)
     {
-      filterList_[celli].initialise(mesh_);
+      filterList_[celli].initialise(ms);
     }
     
     Info << "    cellFilter: Done!" << endl;

@@ -21,10 +21,10 @@ constant/cellToRegion
 *.foam
 
 # keep the scripts and gnuplot files
-!*.sh
-!*.plt
-!*.png
+!*.sh       # shells cripts
+!*.plt      # gnuplot
+!*.png      # pictures and stuff
 
 # keep whatever is in the results folder
-!results/
+!results/*
 !graphs/*
