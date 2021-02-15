@@ -154,6 +154,7 @@ namespace filters
       // slow in parallel cases, and looping over the whole mesh is just faster.
       // It might be due to communication but I am unsure why. Let's see how it
       // will scale.
+      //meshSearch ms(mesh);
       
       label celli = ms.findNearestCell(FilterDefinition::center());
       
