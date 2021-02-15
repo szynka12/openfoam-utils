@@ -28,7 +28,7 @@ class CellFilter
       {
         if (target_mesh_ == nullptr)
         {
-          FatalError << "Filter for cell " << cell_ << " has nullptr!" << endl;
+          FatalError << "from CellFilter: Filter for cell " << cell_ << " has nullptr!" << endl;
         }
       }
      
@@ -37,7 +37,7 @@ class CellFilter
       virtual inline bool in_range(const vector& evaluation_point) const
       {
         if (!target_mesh_) 
-          FatalError << "Filter for cell " << cell_ << " has nullptr!" << endl;
+          FatalError << "from in_range: Filter for cell " << cell_ << " has nullptr!" << endl;
        
         return target_mesh_->pointInCell(evaluation_point, cell_);
       }

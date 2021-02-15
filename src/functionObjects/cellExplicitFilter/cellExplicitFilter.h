@@ -45,6 +45,7 @@ class cellExplicitFilter
         bool divide_by_volume_;
         bool write_volume_field_;
         bool is_parallel_;
+        bool initialised_;
         
     // Helper functions
 
@@ -90,6 +91,8 @@ public:
 
         //- Read the explicitLaplaceFilter data
         virtual bool read(const dictionary& dict);
+
+        virtual void initialise();
 
         //- Execute, currently does nothing
         virtual bool execute();
@@ -142,6 +145,12 @@ void cellExplicitFilter::addMeanField(const word& field_name)
       );
     
   }
+
+  if (mesh_ptr_->foundObject<VolFieldType>(filtered_field_name))
+  {
+    Foam::Info << "    Field " 
+               << filtered_field_name << " added succesfully!" << endl;
+  }
   
 }
 
@@ -192,7 +201,7 @@ void cellExplicitFilter::filterField( const word& fieldName ) const
           f_filtered[celli] 
             = filterList_[celli].localConvolution<Type>(f_original, false);
       }
-
+      
       f_filtered.correctBoundaryConditions();
       
     }

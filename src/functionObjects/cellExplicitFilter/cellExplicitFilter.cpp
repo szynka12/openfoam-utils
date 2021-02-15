@@ -31,7 +31,8 @@ Foam::functionObjects::cellExplicitFilter::cellExplicitFilter
         dict.getOrDefault<string>("targetMesh", "targetMesh")),
     mesh_ptr_(nullptr),
     divide_by_volume_(true),
-    write_volume_field_(dict.getOrDefault("writeFilterVolume", false))
+    write_volume_field_(dict.getOrDefault("writeFilterVolume", false)),
+    initialised_(false)
 {
     // check the switches
     
@@ -125,9 +126,16 @@ Foam::functionObjects::cellExplicitFilter::cellExplicitFilter
       V.write();
     }
 
-
     read(dict);
+}
 
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+void Foam::functionObjects::cellExplicitFilter::initialise()
+{
+  
+    Foam::Info << "    cellFilter: Adding variables..." << endl;
     // add fields from the list to the database
     for (const auto& field : fields_)
     {
@@ -136,10 +144,9 @@ Foam::functionObjects::cellExplicitFilter::cellExplicitFilter
       addMeanField<symmTensor>(field);
       addMeanField<tensor>(field);
     }
+
+    initialised_ = true;
 }
-
-
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 bool Foam::functionObjects::cellExplicitFilter::read(const dictionary& dict)
 {
@@ -149,6 +156,9 @@ bool Foam::functionObjects::cellExplicitFilter::read(const dictionary& dict)
 
 bool Foam::functionObjects::cellExplicitFilter::execute()
 {
+    if (!initialised_)
+      initialise();
+
     Foam::Info << Foam::nl 
                <<"    cellFilter: Filtering variables..."  
                << Foam::nl << Foam::endl;
@@ -172,6 +182,10 @@ bool Foam::functionObjects::cellExplicitFilter::end()
 
 bool Foam::functionObjects::cellExplicitFilter::write()
 {
+    Foam::Info << Foam::nl 
+               <<"    cellFilter: Writing variables..."  
+               << Foam::nl << Foam::endl;
+    
     for (const auto& field : fields_)
     {
       const word filtered_field_name = field + "Filtered";
