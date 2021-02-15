@@ -1,0 +1,192 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2006                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+FTT    #eval{ 2*pi()/0.1375 };
+FTT2   #eval{ 2*$FTT };
+FTT2   #eval{ 2*$FTT };
+FTT3   #eval{ 3*$FTT };
+FTT4   #eval{ 4*$FTT };
+FTT5   #eval{ 5*$FTT };
+FTT6   #eval{ 6*$FTT };
+FTT10  #eval{ 10*$FTT };
+FTT20  #eval{ 20*$FTT };
+FTT40  #eval{ 40*$FTT };
+FTT60  #eval{ 60*$FTT };
+FTT80  #eval{ 80*$FTT };
+
+END #eval{$FTT40};
+
+libs ( userFunctionObjects );
+
+application     pimpleFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         $END;
+
+deltaT          0.03;
+
+writeControl    adjustableRunTime;
+
+writeInterval   $FTT5;
+
+purgeWrite      0;
+
+writeFormat     binary;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   12;
+
+runTimeModifiable true;
+
+adjustTimeStep  true;
+
+maxCo           0.6;
+
+
+functionObjSettings
+{
+    timeStart       0;
+    writeControl    writeTime;
+}
+
+averageSettings
+{
+    restartOnRestart    true;
+}
+
+functions
+{
+    wallShearStress1
+    {
+    	type            wallShearStress;
+    	libs            (fieldFunctionObjects);
+        ${/functionObjSettings};
+    }  
+
+
+    VelocityPressureAverage
+    {
+        type            fieldAverage;
+        libs            (fieldFunctionObjects);
+        
+        ${/functionObjSettings};
+	${/averageSettings};
+        fields
+        (
+            U
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+            p
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+	    wallShearStress
+	    {
+		mean on;
+		prime2Mean off;
+		base time;
+            }
+        );
+    }
+    
+    kBudgetCorrelations
+    {
+        type    kBudgetCorrelations;
+        libs    (userFunctionObjects);
+        ${/functionObjSettings};
+    }
+    
+    CorelationsAverage
+    {
+        type            fieldAverage;
+        libs            (fieldFunctionObjects);
+        
+        ${/functionObjSettings};
+	${/averageSettings};
+        fields
+        (
+            dissipationCorrelation  
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+            turbulentDiffusionCorrelation
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+
+            reynoldsStressTensor
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+            
+            velocityPressureGradientCorrelation
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+        );
+    }
+
+    kBudget
+    {
+        type    kBudget;
+        libs    (userFunctionObjects);
+        ${/functionObjSettings};
+        executeControl writeTime;
+    }
+
+    cellFilter
+    {
+      type    cellExplicitFilter;
+      libs    (userFunctionObjects);
+      fields  (UMean);
+
+      writeFilterVolume true;
+      
+      executeControl    writeTime;
+      writeControl      writeTime;
+      //targetMesh "filteredMesh";
+    }
+
+}
+
+
+
+
+// ************************************************************************* //

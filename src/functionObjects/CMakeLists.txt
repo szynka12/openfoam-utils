@@ -4,6 +4,7 @@ set(SOURCES
   trueExplicitFilter/trueExplicitFilter.cpp
   kBudgetCorrelations/kBudgetCorrelations.C
   kBudget/kBudget.C
+  filters/CellFilter.cpp
   cellExplicitFilter/cellExplicitFilter.cpp
   )
 

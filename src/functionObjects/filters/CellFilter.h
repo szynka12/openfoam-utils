@@ -21,34 +21,13 @@ class CellFilter
 
   // Public
     public:
-      CellFilter(const label& cell, const autoPtr<fvMesh>& mesh)
-      :
-        cell_(cell),
-        target_mesh_(mesh.get())
-      {
-        if (target_mesh_ == nullptr)
-        {
-          FatalError << "from CellFilter: Filter for cell " << cell_ << " has nullptr!" << endl;
-        }
-      }
+      CellFilter(const label& cell, const autoPtr<fvMesh>& mesh);
      
       virtual ~CellFilter(){};
 
-      virtual inline bool in_range(const vector& evaluation_point) const
-      {
-        if (!target_mesh_) 
-          FatalError << "from in_range: Filter for cell " << cell_ << " has nullptr!" << endl;
-       
-        return target_mesh_->pointInCell(evaluation_point, cell_);
-      }
+      virtual bool in_range(const vector& evaluation_point) const;
 
-      virtual inline boundBox bounding_box() const 
-      {
-        auto cell = target_mesh_->cellPoints(cell_);
-        List< point > points(cell.size());
-        forAll(cell, celli) { points[celli] = target_mesh_->points()[celli]; }
-        return boundBox(points);
-      }
+      virtual boundBox bounding_box() const;
 
       virtual inline scalar G(const vector& evaluation_point) const
       {
@@ -61,19 +40,7 @@ class CellFilter
       }
 
       // copy assignment
-      virtual CellFilter& operator=(const CellFilter& other)
-      {
-          // Guard self assignment
-          if (this == &other)
-              return *this;
-          
-          cell_ = other.cell_;
-
-          // I don 't own this pointer so nothing has to be done with it;
-          target_mesh_ = other.target_mesh_;
-
-          return *this;
-      }
+      virtual CellFilter& operator=(const CellFilter& other);
   };
 
 }

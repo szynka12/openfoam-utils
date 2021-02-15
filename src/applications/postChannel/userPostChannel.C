@@ -89,7 +89,24 @@ int main(int argc, char *argv[])
     );
     channelIndex channelIndexing(mesh, channelDict);
 
+    const word U_name = channelDict.getOrDefault<word>("U", "UMean");
+    const word production_name = channelDict.getOrDefault<word>(
+        "production", "production");
 
+    const word dissipation_name = channelDict.getOrDefault<word>(
+        "dissipation", "dissipation");
+    
+    const word vpg_name = channelDict.getOrDefault<word>(
+        "velocityPressureGradient", "velocityPressureGradient");
+    
+    const word mD_name = channelDict.getOrDefault<word>(
+        "molecularDiffusion", "molecularDiffusion");
+
+    const word tD_name = channelDict.getOrDefault<word>(
+        "turbulentDiffusion", "turbulentDiffusion");
+
+    bool only_velocity = channelDict.getOrDefault<bool>("onlyVel", false);
+    
     // For each time step read all fields
     forAll(timeDirs, timeI)
     {
@@ -98,13 +115,37 @@ int main(int argc, char *argv[])
         
         Info << "Reading fields for time " << runTime.timeName() << endl;
 
-        // if (timeI==0){
-        //     Info << "Skipping " << runTime.timeName() << endl;
-        //     continue;
-        //     }
+        IOobject UMeanHeader(U_name, runTime.timeName(), mesh, IOobject::MUST_READ);
+        if (check_header<volVectorField>(UMeanHeader)) {continue;}
+        volVectorField UMean(UMeanHeader, mesh);
 
+        IOobject productionHeader(
+            production_name, runTime.timeName(), mesh, IOobject::MUST_READ);
+        if (check_header<volScalarField>(productionHeader)) {continue;}
+        volScalarField production(productionHeader, mesh);
 
-        #include "readFields.H"
+        IOobject dissipationHeader(
+            dissipation_name, runTime.timeName(), mesh, IOobject::MUST_READ);
+        if (check_header<volScalarField>(dissipationHeader)) {continue;}
+        volScalarField dissipation(dissipationHeader, mesh);
+
+        IOobject vpgHeader(
+            vpg_name, runTime.timeName(), mesh, IOobject::MUST_READ);
+        if (check_header<volScalarField>(vpgHeader)) {continue;}
+        volScalarField vpg(vpgHeader, mesh);
+
+        IOobject molDiffHeader(
+            mD_name, runTime.timeName(), mesh, IOobject::MUST_READ);
+        if (check_header<volScalarField>(molDiffHeader)) {continue;}
+        volScalarField molDiff(molDiffHeader, mesh);
+
+        IOobject turbDiffHeader(
+            tD_name, runTime.timeName(), mesh, IOobject::MUST_READ);
+        if (check_header<volScalarField>(turbDiffHeader)) {continue;}
+        volScalarField turbDiff(turbDiffHeader, mesh);
+    
+
+        //#include "readFields.H"
         
         #include "calculateFields.H"
 

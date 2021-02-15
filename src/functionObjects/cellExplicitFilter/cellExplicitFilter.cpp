@@ -32,7 +32,8 @@ Foam::functionObjects::cellExplicitFilter::cellExplicitFilter
     mesh_ptr_(nullptr),
     divide_by_volume_(true),
     write_volume_field_(dict.getOrDefault("writeFilterVolume", false)),
-    initialised_(false)
+    initialised_(false),
+    cache_serial_(dict.getOrDefault("cache", false))
 {
     // check the switches
     
@@ -126,11 +127,40 @@ Foam::functionObjects::cellExplicitFilter::cellExplicitFilter
       V.write();
     }
 
+    if (cache_serial_)
+    {
+      cache_serial();
+    }
+
     read(dict);
 }
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+void Foam::functionObjects::cellExplicitFilter::cache_serial() const
+{
+  auto weights_header = IOobject("weights", 
+      mesh_ptr_->thisDb().time().constant(), mesh_ptr_->thisDb(), 
+      IOobject::NO_READ, IOobject::NO_WRITE);
+
+  auto cells_header = IOobject("cells", 
+      mesh_ptr_->thisDb().time().constant(), mesh_ptr_->thisDb(), 
+      IOobject::NO_READ, IOobject::NO_WRITE);
+
+  auto weights = IOList<List<scalar>>(weights_header, mesh_ptr_->nCells());
+  auto cells = IOList<List<label>>(cells_header, mesh_ptr_->nCells());
+  
+  forAll(filterList_, i)
+  {
+    weights[i] = filterList_[i].weights();
+    cells[i] = filterList_[i].cells();
+  }
+  
+  weights.write();
+  cells.write();
+
+}
 
 void Foam::functionObjects::cellExplicitFilter::initialise()
 {

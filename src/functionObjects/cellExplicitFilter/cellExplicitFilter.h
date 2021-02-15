@@ -46,8 +46,10 @@ class cellExplicitFilter
         bool write_volume_field_;
         bool is_parallel_;
         bool initialised_;
+        bool cache_serial_;
         
     // Helper functions
+        void cache_serial() const;
 
         //- Add mean average field to database
         template<class Type>
@@ -165,16 +167,16 @@ void cellExplicitFilter::writeField( const word& fieldName ) const
     {
         VolFieldType& f = mesh_ptr_->lookupObjectRef<VolFieldType>(fieldName);
         
-        if (divide_by_volume_)
-        {
-          const volScalarField& V 
-            = mesh_ptr_->lookupObject<volScalarField>("FilterVolume");
+        //if (divide_by_volume_)
+        //{
+          //const volScalarField& V 
+            //= mesh_ptr_->lookupObject<volScalarField>("FilterVolume");
           
-          for(label celli = 0; celli < mesh_ptr_->nCells(); celli++)
-          {            
-            f[celli] =  f[celli] * ( 1.0 / (V[celli] + SMALL) );
-          }
-        }
+          //for(label celli = 0; celli < mesh_ptr_->nCells(); celli++)
+          //{            
+            //f[celli] =  f[celli] * ( 1.0 / (V[celli] + SMALL) );
+          //}
+        //}
 
         f.write();
     }
@@ -199,7 +201,8 @@ void cellExplicitFilter::filterField( const word& fieldName ) const
       for(label celli = 0; celli < mesh_ptr_->nCells(); celli++)
       {
           f_filtered[celli] 
-            = filterList_[celli].localConvolution<Type>(f_original, false);
+            = filterList_[celli].localConvolution<Type>(
+                f_original, divide_by_volume_);
       }
       
       f_filtered.correctBoundaryConditions();
