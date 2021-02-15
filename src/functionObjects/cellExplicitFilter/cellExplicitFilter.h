@@ -93,6 +93,8 @@ public:
 
         //- Read the explicitLaplaceFilter data
         virtual bool read(const dictionary& dict);
+        
+        virtual void calculate_weights();
 
         virtual void initialise();
 

@@ -77,15 +77,7 @@ Foam::functionObjects::cellExplicitFilter::cellExplicitFilter
       filterList_[celli].set_definition(filters::CellFilter(celli, mesh_ptr_)); 
     }
 
-    
-    Info << "    cellFilter: Computing filter volume and stencils..." << endl;
-    meshSearch ms(mesh_);
-    for (label celli = 0; celli < n_taget_cells; celli++)
-    {
-      filterList_[celli].initialise(ms);
-    }
-    
-    Info << "    cellFilter: Done!" << endl;
+    calculate_weights();
     
     // If we are parallel then volume will be saved in constant so we will know
     // that it is neccesary for reconstruction
@@ -137,6 +129,44 @@ Foam::functionObjects::cellExplicitFilter::cellExplicitFilter
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+
+void Foam::functionObjects::cellExplicitFilter::calculate_weights()
+{
+
+  // Try reading the weights and cells
+  auto weights_header = IOobject("weights", 
+      mesh_ptr_->thisDb().time().constant(), mesh_ptr_->thisDb(), 
+      IOobject::READ_IF_PRESENT, IOobject::NO_WRITE);
+
+  auto cells_header = IOobject("cells", 
+      mesh_ptr_->thisDb().time().constant(), mesh_ptr_->thisDb(), 
+      IOobject::READ_IF_PRESENT, IOobject::NO_WRITE);
+
+  auto weights = IOList<List<scalar>>(weights_header);
+  auto cells = IOList<List<label>>(cells_header);
+
+  if (weights.headerOk() && cells.headerOk())
+  {
+    Info << "    cellFilter: Using cashed filter data..." << endl;
+    
+    for (label celli = 0; celli < mesh_ptr_->nCells(); celli++)
+    {
+      filterList_[celli].initialise(weights[celli], cells[celli], mesh_);
+    }
+  }
+  else
+  {
+    Info << "    cellFilter: Computing filter volume and stencils..." << endl;
+    meshSearch ms(mesh_);
+    for (label celli = 0; celli < mesh_ptr_->nCells(); celli++)
+    {
+      filterList_[celli].initialise(ms);
+    }
+    Info << "    cellFilter: Done!" << endl;
+  }
+
+}
 
 void Foam::functionObjects::cellExplicitFilter::cache_serial() const
 {

@@ -79,6 +79,8 @@ namespace filters
     void set_definition(FilterDefinition def);
 
     void initialise(const meshSearch& ms);
+    void initialise(const List<scalar>& weights, const List<label>& cells, 
+        const fvMesh& mesh);
 
 
     template<class Type>
@@ -150,6 +152,20 @@ void UnstructuredMeshFilter<FilterDefinition>::set_definition(FilterDefinition d
   FilterDefinition::operator=(def);
 }
 
+template <class FilterDefinition>
+void UnstructuredMeshFilter<FilterDefinition>::initialise(
+    const List<scalar>& weights, const List<label>& cells, const fvMesh& mesh)
+{
+  weights_ = weights;
+  cells_ = cells;
+
+  const scalarField& cell_volumes = mesh.cellVolumes();
+  
+  forAll(cells_, i)
+  {
+    volume_ += cell_volumes[cells_[i]];
+  }
+}
 
 template <class FilterDefinition>
 void UnstructuredMeshFilter<FilterDefinition>::initialise(const meshSearch& ms)
