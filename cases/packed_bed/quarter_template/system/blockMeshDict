@@ -16,15 +16,21 @@ FoamFile
 
 scale 1;
 
-i     1;
-j     1;
-k     1;
 
-r     1;
+//keywoards here are for sed, replace for normalmesh generation
+i     index1;
+j     index2;
+k     index3;
 
-ox    #eval{ (2 * $i - 1 ) * $r };
-oy    #eval{ (2 * $j - 1 ) * $r };
-oz    #eval{ (2 * $k - 1 ) * $r };
+//i     1;
+//j     1;
+//k     1;
+
+r     0.5;
+
+ox    #eval{ 2 * ($i - 0.5 ) * $r };
+oy    #eval{ 2 * ($j - 0.5 ) * $r };
+oz    #eval{ 2 * ($k - 0.5 ) * $r };
 translation vector ($ox , $oy , $oz);
 
 
@@ -95,7 +101,48 @@ faces
     project ( 7 10 2 5 ) sphere 
 );
 
-boundary        ( );
+boundary        
+( 
+    x
+    {
+        type patch;
+        faces ((0 1 4 3));
+    }
+    y
+    {
+        type patch;
+        faces ((1 10 8 4));
+    }
+    z
+    {
+        type patch;
+        faces ((3 4 8 9));
+    }
+    sphere
+    {
+        type patch;
+        faces 
+        (
+            ( 0 6 5 2 ) 
+            ( 9 6 5 7 ) 
+            ( 7 10 2 5 )
+        );
+    }
+    internal
+    {
+        type patch;
+        faces 
+        (
+          (3 6 0 0)
+          (3 9 9 6)
+          (9 8 7 9)
+          (8 10 10 7)
+          (10 10 1 2)
+          (1 0 0 2)
+        );
+    }
+
+);
 
 
 // ************************************************************************* //
