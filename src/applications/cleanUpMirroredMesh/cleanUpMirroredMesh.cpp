@@ -62,13 +62,20 @@ int main(int argc, char* argv[])
   auto face_normals = mesh.faceAreas() / mag(mesh.faceAreas());
 
   auto marked_faces = boolList(faces.size(), false);
-
+  
+  Foam::label n_del_faces = 0; 
+  Foam::Info << "Marking faces for deletion..." << Foam::endl;
+  
   for (label i = 0; i < mesh.nInternalFaces(); i++)
   {
     marked_faces[i]
         = eps_compare(mag(dot(face_normals()[i], normal)), 1.0)
           && eps_compare(mag(dot(face_centers[i] - point, normal)), 0.0);
+    if (marked_faces[i]) n_del_faces++;
   }
+
+  Foam::Info << "Done!" << Foam::endl;
+  Foam::Info << "Marking cells for deletion..." << Foam::endl;
 
   labelList              new_cell_labels(mesh.nCells(), 0);
   std::map<label, label> deleted_cells;
@@ -83,11 +90,38 @@ int main(int argc, char* argv[])
       // mark the the neighbour for deletion
       deleted_cells[nei] = owner;
 
-      // decrease the number in each cell above the deleted one by 1
-      for (label i = nei + 1; i < mesh.nCells(); i++) { new_cell_labels[i]--; }
+      // Decrease the number in each cell above the deleted one by 1
+      //
+      //for (label i = nei + 1; i < mesh.nCells(); i++) { new_cell_labels[i]--; }
+      //
+      // This loop costs a lot on big meshes: for every marked face in (hundred 
+      // thousand) traverse a cell list (in milion). The same can be achieved by
+      // decrementing only the found cell labels and than updating the
+      // information in the cell list, all at once!
+
+      if (nei + 1 < mesh.nCells()) { new_cell_labels[nei + 1]--; }
     }
   }
-
+  Foam::Info << "Done!" << Foam::endl;
+  
+  Foam::Info << "Updating the cell decrements list..." << Foam::endl;
+  
+  Foam::label cumulated_decrement = 0;
+  for (label i = 0; i < mesh.nCells(); i++)
+  {
+    if (new_cell_labels[i] == -1) 
+    {
+      new_cell_labels[i] += cumulated_decrement;
+      cumulated_decrement--;
+    }
+    else
+    {
+      new_cell_labels[i] += cumulated_decrement;
+    }
+  }
+  Foam::Info << "Done!" << Foam::endl;
+  
+  Foam::Info << "Updating cell numbers ..." << Foam::endl;
   auto owner     = mesh.faceOwner();
   auto neighbour = mesh.faceNeighbour();
 
@@ -102,10 +136,15 @@ int main(int argc, char* argv[])
       // if (owner[i] > neighbour[i]) {faces[i].flip();}
     }
   }
+  Foam::Info << "Done!" << Foam::endl;
+  
 
+  Foam::Info << "Removing " << n_del_faces << " faces..." << Foam::endl;
   inplaceSubset(marked_faces, faces, true);
   inplaceSubset(marked_faces, owner, true);
   inplaceSubset(marked_faces, neighbour, true);
+  Foam::Info << "Done!" << Foam::endl;
+
 
   auto cell_info = mt::cell_neighbours(owner, neighbour);
   auto bad_cells = mt::find_multiply_connected_cells(cell_info.second);
@@ -119,11 +158,13 @@ int main(int argc, char* argv[])
   }
 
   // delete all the bad faces
-  Foam::Info << "\tRemoving " << n_bad_faces << " faces..." << Foam::endl;
+  Foam::Info << "Removing " << n_bad_faces 
+             << " faces (belonging to multiply connected cells)..." 
+             << Foam::endl;
   Foam::inplaceSubset(bad_faces, faces);
   Foam::inplaceSubset(bad_faces, owner);
   Foam::inplaceSubset(bad_faces, neighbour);
-  Foam::Info << "\tDone!" << Foam::endl;
+  Foam::Info << "Done!" << Foam::endl;
 
   auto points = mesh.points();
 

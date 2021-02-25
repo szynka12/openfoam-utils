@@ -107,11 +107,11 @@ Foam::boolList repair_multiply_connected_cells(
         multiple_faces.append(c2[facei]);
       }
     }
-    Foam::Info << "\t"
-               << "Correcting faces: " << multiple_faces << Foam::endl;
+    //Foam::Info << "\t"
+               //<< "Correcting faces: " << multiple_faces << Foam::endl;
 
     faces[multiple_faces[0]] = combine_faces(faces, multiple_faces);
-    Foam::Info << faces[multiple_faces[0]] << Foam::endl;
+    //Foam::Info << faces[multiple_faces[0]] << Foam::endl;
 
     for (Foam::label i = 1; i < multiple_faces.size(); i++)
     {
