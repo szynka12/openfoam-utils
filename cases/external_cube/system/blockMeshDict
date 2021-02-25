@@ -17,12 +17,12 @@ FoamFile
 scale    1;
 
 r 1;
-R 2;
+R 3;
 
-x 4;
-y 4; 
-z 4;
-wake 15;
+x 8;
+y 8; 
+z 8;
+wake 40;
 
 geometry
 {
@@ -44,11 +44,11 @@ geometry
 rsq3 #eval{$r / sqrt(3)};
 Rsq3 #eval{$R / sqrt(3)};
 
-bl 20;
-N 20;
-out 20;
+bl 30;
+N 30;
+out 30;
 
-wake_N #eval{$out * 3.6};
+wake_N #eval{$out * 5};
 wake_gr 1;
 
 bl_gr 0.1;
@@ -210,15 +210,15 @@ blocks
   hex (21 69 24 8 23 70 26 10) ($out $out $N ) simpleGrading (1 1 1)
   hex (23 70 26 10 43 71 55 37) ($out $out $out) simpleGrading (1 1 1)
 
-  //wake
+  ////wake
   hex (56 72 76 40 57 73 77 20) ($wake_N $out $out) simpleGrading (1 1 1)
-  hex (57 73 77 20 58 74 78 22) ($wake_N $out $out) simpleGrading (1 1 1)
+  hex (57 73 77 20 58 74 78 22) ($wake_N $out $N) simpleGrading (1 1 1)
   hex (58 74 78 22 59 75 79 42) ($wake_N $out $out) simpleGrading (1 1 1)
-  hex (40 76 80 41 20 77 81 21) ($wake_N $out $out) simpleGrading (1 1 1)
-  hex (20 77 81 21 22 78 82 23) ($wake_N $out $out) simpleGrading (1 1 1)
-  hex (22 78 82 23 42 79 83 43) ($wake_N $out $out) simpleGrading (1 1 1)
+  hex (40 76 80 41 20 77 81 21) ($wake_N $N $out) simpleGrading (1 1 1)
+  hex (20 77 81 21 22 78 82 23) ($wake_N $N $N) simpleGrading (1 1 1)
+  hex (22 78 82 23 42 79 83 43) ($wake_N $N $out) simpleGrading (1 1 1)
   hex (41 80 84 68 21 81 85 69) ($wake_N $out $out) simpleGrading (1 1 1)
-  hex (21 81 85 69 23 82 86 70) ($wake_N $out $out) simpleGrading (1 1 1)
+  hex (21 81 85 69 23 82 86 70) ($wake_N $out $N) simpleGrading (1 1 1)
   hex (23 82 86 70 43 83 87 71) ($wake_N $out $out) simpleGrading (1 1 1)
 );
 
@@ -295,8 +295,9 @@ boundary
   }
   yp
   {
-    type coupled;
-    neighbour ym;
+    type cyclic;
+
+    neighbourPatch ym;
     faces 
     (
      (50 51 24 25)
@@ -315,8 +316,8 @@ boundary
   }
   ym
   {
-    type coupled;
-    neighbour yp;
+    type cyclic;
+    neighbourPatch yp;
     faces 
     (
      (48 49 17 16)
@@ -335,8 +336,8 @@ boundary
   }
   zp
   {
-    type coupled;
-    neighbour zm;
+    type cyclic;
+    neighbourPatch zm;
     faces 
     (
      (52 53 36 39)
@@ -355,8 +356,8 @@ boundary
   }
   zm
   {
-    type coupled;
-    neighbour zp;
+    type cyclic;
+    neighbourPatch zp;
     faces 
     (
      (48 49 32 33)

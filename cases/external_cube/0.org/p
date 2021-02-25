@@ -33,9 +33,9 @@ boundaryField
     outlet
     {
         type            fixedValue;
-        value           $internalField
+        value           $internalField;
     }
-    "(y*|z*)"
+    "(yp|ym|zp|zm)"
     {
         type            cyclic;
     }

@@ -10,6 +10,7 @@ constant/extendedFeatureEdgeMesh
 *.eMesh
 constant/polyMesh/*
 */polyMesh/*
+targetMesh
 
 constant/cellToRegion
 
