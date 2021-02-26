@@ -1,0 +1,32 @@
+    readFields
+    {
+        // Mandatory entries (unmodifiable)
+        type            readFields;
+        libs            (fieldFunctionObjects);
+
+        // Mandatory entries (runtime modifiable)
+        fields
+        (
+            UMean 
+            production 
+            dissipation 
+            velocityPressureGradient 
+            molecularDiffusion 
+            turbulentDiffusion
+        );
+    }
+
+    cellFilter
+    {
+      type    cellExplicitFilter;
+      libs    (userFunctionObjects);
+      fields  (UMean production dissipation
+          turbulentDiffusion molecularDiffusion velocityPressureGradient);
+
+      writeFilterVolume true;
+      
+      cache true;
+      executeControl    writeTime;
+      writeControl      writeTime;
+      targetMesh        "targetMesh_uniform";
+    }

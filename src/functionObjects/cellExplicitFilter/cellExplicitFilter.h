@@ -33,6 +33,7 @@ class cellExplicitFilter
         const List<word> fields_;
         
         // Time of the target mesh
+        mutable Foam::word target_mesh_name_;
         mutable Foam::Time target_time_;
         
         // Target mesh

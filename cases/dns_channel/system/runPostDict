@@ -1,0 +1,90 @@
+    wallShearStress1
+    {
+    	type            wallShearStress;
+    	libs            (fieldFunctionObjects);
+        ${/functionObjSettings};
+    }  
+
+
+    VelocityPressureAverage
+    {
+        type            fieldAverage;
+        libs            (fieldFunctionObjects);
+        
+        ${/functionObjSettings};
+	      ${/averageSettings};
+        fields
+        (
+            U
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+            p
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+	          wallShearStress
+	          {
+		            mean on;
+		            prime2Mean off;
+		            base time;
+            }
+        );
+    }
+    
+    kBudgetCorrelations
+    {
+        type    kBudgetCorrelations;
+        libs    (userFunctionObjects);
+        ${/functionObjSettings};
+    }
+    
+    CorelationsAverage
+    {
+        type            fieldAverage;
+        libs            (fieldFunctionObjects);
+        
+        ${/functionObjSettings};
+	      ${/averageSettings};
+        fields
+        (
+            dissipationCorrelation  
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+            turbulentDiffusionCorrelation
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+
+            reynoldsStressTensor
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+            
+            velocityPressureGradientCorrelation
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+        );
+    }
+    
+    kBudget
+    {
+        type    kBudget;
+        libs    (userFunctionObjects);
+        ${/functionObjSettings};
+        executeControl writeTime;
+    }

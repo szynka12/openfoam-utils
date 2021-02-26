@@ -26,9 +26,10 @@ Foam::functionObjects::cellExplicitFilter::cellExplicitFilter
 :
     fvMeshFunctionObject(name, runTime, dict),
     fields_(dict.get<List<word>>("fields")),
+    target_mesh_name_(dict.getOrDefault<string>("targetMesh", "targetMesh")),
     target_time_(
         runTime.rootPath()/runTime.caseName()/runTime.constant(),
-        dict.getOrDefault<string>("targetMesh", "targetMesh")),
+        target_mesh_name_),
     mesh_ptr_(nullptr),
     divide_by_volume_(true),
     write_volume_field_(dict.getOrDefault("writeFilterVolume", false)),
@@ -47,7 +48,8 @@ Foam::functionObjects::cellExplicitFilter::cellExplicitFilter
 
     // read the other mesh here or in the initialisation
     Foam::Info << Foam::nl 
-               <<"    cellFilter: Reading target mesh..."  
+               << "    cellFilter: Reading target mesh (named " 
+               << target_mesh_name_ << " )..."  
                << Foam::endl;
     
     mesh_ptr_.reset

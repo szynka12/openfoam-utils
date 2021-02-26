@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+rename_patch () {
+  tmp=$(foamDictionary constant/polyMesh/boundary -entry entry0.${1} -value)
+  foamDictionary constant/polyMesh/boundary -entry entry0.${1} -remove
+  foamDictionary constant/polyMesh/boundary -entry entry0.${2} -set "${tmp}"
+}
+
+entry="foamDictionary constant/polyMesh/boundary -entry entry0"
+
+cgnsToFoam ../geometries/dns_channel_halfslab.cgns
+splitByRegion -noDict -patch "xm-periodic"
+
+mirrorMesh -overwrite
+cleanUpMirroredMesh -overwrite
+combinePatchFaces 90 -overwrite
+
+
+
+

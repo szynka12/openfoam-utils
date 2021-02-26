@@ -1,0 +1,153 @@
+    cloudSampling 
+    {
+        type            sets;
+        libs            (sampling);
+        writeControl    runTime;
+        writeInterval   0.3;
+
+        interpolationScheme cell;
+
+        setFormat raw;
+
+        fields
+        (
+            U p UMean pMean
+        );
+
+        sets
+        (
+            yplus5 
+            {
+                type        cloud;
+                axis        xyz;  
+                points 
+                (
+                    #include yplus_5 
+                );
+            }
+            yplus6 
+            {
+                type        cloud;
+                axis        xyz;  
+                points 
+                (
+                    #include yplus_6 
+                );
+            }
+            yplus10 
+            {
+                type        cloud;
+                axis        xyz;  
+                points 
+                (
+                    #include yplus_10 
+                );
+            }
+            yplus20 
+            {
+                type        cloud;
+                axis        xyz;  
+                points 
+                (
+                    #include yplus_20 
+                );
+            }
+            /*
+            yplus30 
+            {
+                type        cloud;
+                axis        xyz;  
+                points 
+                (
+                    #include yplus_30 
+                );
+            }
+            */
+            yplus40 
+            {
+                type        cloud;
+                axis        xyz;  
+                points 
+                (
+                    #include yplus_40 
+                );
+            }
+            yplus61 
+            {
+                type        cloud;
+                axis        xyz;  
+                points 
+                (
+                    #include yplus_61 
+                );
+            }
+            /*
+            yplus80 
+            {
+                type        cloud;
+                axis        xyz;  
+                points 
+                (
+                    #include yplus_80 
+                );
+            }
+            yplus98 
+            {
+                type        cloud;
+                axis        xyz;  
+                points 
+                (
+                    #include yplus_98 
+                );
+            }
+            */
+            yplus151 
+            {
+                type        cloud;
+                axis        xyz;  
+                points 
+                (
+                    #include yplus_151 
+                );
+            }
+            /*
+            yplus199 
+            {
+                type        cloud;
+                axis        xyz;  
+                points 
+                (
+                    #include yplus_199 
+                );
+            }
+            yplus251 
+            {
+                type        cloud;
+                axis        xyz;  
+                points 
+                (
+                    #include yplus_251 
+                );
+            }
+            yplus302 
+            {
+                type        cloud;
+                axis        xyz;  
+                points 
+                (
+                    #include yplus_302 
+                );
+            }
+            yplus392 
+            {
+                type        cloud;
+                axis        xyz;  
+                points 
+                (
+                    #include yplus_392 
+                );
+            }
+            */
+        );
+    }
+
