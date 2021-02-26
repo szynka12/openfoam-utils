@@ -13,9 +13,9 @@ using cellNeigboursList = Foam::List<Foam::List<Foam::label>>;
 using badCellPairsList  = Foam::List<std::pair<Foam::label, Foam::label>>;
 using cellFaces         = Foam::List<Foam::List<Foam::label>>;
 using cellInfoPair      = std::pair<cellFaces, cellNeigboursList>;
+using labelPair         = std::pair<Foam::label, Foam::label>;
 
-std::pair<Foam::label, Foam::label> find_matching_vertex(const Foam::face& f1,
-                                                         const Foam::face& f2)
+labelPair find_matching_vertex(const Foam::face& f1, const Foam::face& f2)
 {
   forAll(f1, f1i)
   {
@@ -24,7 +24,7 @@ std::pair<Foam::label, Foam::label> find_matching_vertex(const Foam::face& f1,
       if (f1[f1i] == f2[f2i]) { return std::make_pair(f1i, f2i); }
     }
   }
-  Foam::FatalError << "Faces not connected by an edge!" << Foam::endl;
+  Foam::FatalError << "Faces not connected!" << Foam::endl;
   return std::make_pair(-1, -1);
 }
 
@@ -48,7 +48,6 @@ Foam::face combine_faces(const Foam::faceList&  faces,
   for (Foam::label facei = 1; facei < merged_faces.size(); facei++)
   {
     Foam::face donor_face = faces[merged_faces[facei]];
-    // This is dirty hack used to exit two nested loops
 
     auto indices = find_matching_vertex(recipient_face, donor_face);
 
@@ -81,6 +80,8 @@ Foam::boolList repair_multiply_connected_cells(
     Foam::faceList& faces)
 {
   const auto& cell_list = cell_info.first;
+  
+  Foam::Info << "\tCorrecting cells..." << Foam::endl;
 
   Foam::boolList bad_faces(faces.size(), true);
   forAll(bad_cells, bi)
@@ -110,14 +111,52 @@ Foam::boolList repair_multiply_connected_cells(
     //Foam::Info << "\t"
                //<< "Correcting faces: " << multiple_faces << Foam::endl;
 
-    faces[multiple_faces[0]] = combine_faces(faces, multiple_faces);
-    //Foam::Info << faces[multiple_faces[0]] << Foam::endl;
+    // we have a problem here when faces are triangles connected by a single
+    // point:
+    // 1 -- 2 -- 4
+    // |   /\    |
+    // |  /  \   |
+    // | /    \  |
+    //  3       5
+    //  we should detect that and leave tham at peace. For now we will use a
+    //  really dirt solution 
 
-    for (Foam::label i = 1; i < multiple_faces.size(); i++)
+    if (multiple_faces.size() == 2)
     {
-      bad_faces[multiple_faces[i]] = false;
+      // we do this check two times so this will have to be refactored
+
+      Foam::face recipient_face = faces[multiple_faces[0]];
+      Foam::face donor_face = faces[multiple_faces[1]];
+      auto indices = find_matching_vertex(recipient_face, donor_face);
+
+      auto next_i_r = bound_index(indices.first + 1, recipient_face.size());
+      auto prev_i_d = bound_index(indices.second - 1, donor_face.size());
+
+      Foam::Info << (recipient_face[next_i_r] == donor_face[prev_i_d] ) 
+        << Foam::endl;
+
+      faces[multiple_faces[0]] = combine_faces(faces, multiple_faces);
+
+      for (Foam::label i = 1; i < multiple_faces.size(); i++)
+      {
+        bad_faces[multiple_faces[i]] = false;
+      }
+
     }
+    else
+    {
+      faces[multiple_faces[0]] = combine_faces(faces, multiple_faces);
+
+      for (Foam::label i = 1; i < multiple_faces.size(); i++)
+      {
+        bad_faces[multiple_faces[i]] = false;
+      }
+    }
+
   }
+  
+  Foam::Info << "\tDone" << Foam::endl;
+
   return bad_faces;
 }
 
@@ -130,7 +169,8 @@ cellInfoPair cell_neighbours(const Foam::labelList& owners,
 
   Foam::List<Foam::List<Foam::label>> cell_nei(n_cells);
   cellFaces                           cell_faces(n_cells);
-
+  
+  Foam::Info <<"\tGenerating cell connectivity..." << Foam::endl;
   forAll(neighbours, i)
   {
     Foam::label c1 = neighbours[i];
@@ -142,6 +182,7 @@ cellInfoPair cell_neighbours(const Foam::labelList& owners,
     cell_faces[c1].append(i);
     cell_faces[c2].append(i);
   }
+  Foam::Info << "\tDone!" << Foam::endl;
 
   // Sort every list, so that finding duplicates would be easy
   std::for_each(cell_nei.begin(), cell_nei.end(),
@@ -156,9 +197,16 @@ badCellPairsList find_multiply_connected_cells(
   // Find multiply connected cells (as in the drawing). Lists are sorted so now
   // we simple compare the consecutive elements. We store here ordered pairs
   // (lower cell is first).
-  badCellPairsList bad_cells;
+  
+  Foam::Info << "\tLooking for multiply connected cells..." << Foam::endl;
+  
+  badCellPairsList bad_cells(cell_nei.size());
+  
+  Foam::label last_size = -1;
+  
   forAll(cell_nei, celli)
   {
+
     const auto& curr_nei = cell_nei[celli];
     for (Foam::label neii = 1; neii < curr_nei.size(); neii++)
     {
@@ -167,14 +215,24 @@ badCellPairsList find_multiply_connected_cells(
         auto bcell = celli < curr_nei[neii]
                          ? std::make_pair(celli, curr_nei[neii])
                          : std::make_pair(curr_nei[neii], celli);
+        last_size++;
+        if (last_size + 1 >= bad_cells.size())
+        {
+          Foam::Info << "\tResizing..." << Foam::endl;
+          bad_cells.resize(bad_cells.size() + cell_nei.size());
+        }
 
-        bad_cells.append(bcell);
+        bad_cells[last_size] = bcell;
       }
     }
   }
+  
+  bad_cells.resize(last_size + 1);
 
+  Foam::Info << "\tSorting..." << Foam::endl;
   Foam::inplaceUniqueSort(bad_cells);
-
+  Foam::Info << "\tDone!" << Foam::endl;
+  
   return bad_cells;
 }
 

@@ -8,12 +8,13 @@ rename_patch () {
 
 entry="foamDictionary constant/polyMesh/boundary -entry entry0"
 
-cgnsToFoam ../geometries/dns_channel_halfslab.cgns
-splitByRegion -noDict -patch "xm-periodic"
+cgnsToFoam ../../../../geometries/geometries/dns_channel_halfslab.cgns
+#splitByRegion -noDict -patch "xm-periodic"
 
-mirrorMesh -overwrite
-cleanUpMirroredMesh -overwrite
-combinePatchFaces 90 -overwrite
+#mirrorMesh -overwrite
+#cleanUpMirroredMesh -overwrite
+#combinePatchFaces 90 -overwrite
+
 
 
 

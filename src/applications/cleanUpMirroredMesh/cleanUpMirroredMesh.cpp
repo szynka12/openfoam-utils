@@ -22,6 +22,7 @@ label new_cell_number(const labelList&              decrements,
 int main(int argc, char* argv[])
 {
   Foam::argList::noParallel();
+  Foam::argList::addBoolOption("fast");
 
   // clang-format off
   #include "addOverwriteOption.H"
@@ -31,6 +32,7 @@ int main(int argc, char* argv[])
   // clang-format on
 
   const bool overwrite = args.found("overwrite");
+  const bool cell_subset = args.found("fast");
 
   IOdictionary settings(IOobject("mirrorMeshDict", runTime.system(), mesh,
                                  IOobject::MUST_READ, IOobject::NO_WRITE));
@@ -78,6 +80,7 @@ int main(int argc, char* argv[])
   Foam::Info << "Marking cells for deletion..." << Foam::endl;
 
   labelList              new_cell_labels(mesh.nCells(), 0);
+  labelList              cells_near_plane;
   std::map<label, label> deleted_cells;
 
   for (label i = 0; i < mesh.nInternalFaces(); i++)
@@ -100,6 +103,11 @@ int main(int argc, char* argv[])
       // information in the cell list, all at once!
 
       if (nei + 1 < mesh.nCells()) { new_cell_labels[nei + 1]--; }
+      if (cell_subset) 
+      {
+        cells_near_plane.append(nei);
+        cells_near_plane.append(owner);
+      }
     }
   }
   Foam::Info << "Done!" << Foam::endl;
@@ -136,8 +144,19 @@ int main(int argc, char* argv[])
       // if (owner[i] > neighbour[i]) {faces[i].flip();}
     }
   }
+  if (cell_subset)
+  {
+    forAll(cells_near_plane, celli)
+    {
+      cells_near_plane[celli] 
+          = new_cell_number(
+              new_cell_labels, deleted_cells, cells_near_plane[celli]);
+    }
+  }
+
   Foam::Info << "Done!" << Foam::endl;
   
+
 
   Foam::Info << "Removing " << n_del_faces << " faces..." << Foam::endl;
   inplaceSubset(marked_faces, faces, true);
@@ -147,6 +166,19 @@ int main(int argc, char* argv[])
 
 
   auto cell_info = mt::cell_neighbours(owner, neighbour);
+  Foam::Info << cell_info.first.size() << Foam::endl;
+  if (cell_subset)
+  {
+    Foam::boolList subset_list(cell_info.first.size(), false);
+    for (const auto& c : cells_near_plane)
+    {
+      subset_list[c] = true;
+    }
+    //inplaceSubset(subset_list, cell_info.first);
+    inplaceSubset(subset_list, cell_info.second);
+  }
+  Foam::Info << cell_info.first.size() << Foam::endl;
+
   auto bad_cells = mt::find_multiply_connected_cells(cell_info.second);
   auto bad_faces = mt::repair_multiply_connected_cells(cell_info, bad_cells,
                                                        owner, neighbour, faces);

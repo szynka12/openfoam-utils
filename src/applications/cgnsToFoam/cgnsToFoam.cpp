@@ -28,6 +28,7 @@ int main(int argc, char *argv[])
 {
   Foam::argList::noParallel();
   Foam::argList::addArgument(".cgns file");
+  Foam::argList::addOption("scale", "scalar", "scale the mesh");
 
 // clang-format off
   #include "setRootCase.H"
@@ -37,6 +38,7 @@ int main(int argc, char *argv[])
   int file = cgh::open_cgns(args[1].c_str());
 
   bool split = args.found("regSplit");
+  Foam::scalar scale = args.getOrDefault<Foam::scalar>("scale", 1.0);
 
   cgh::Base b(file, 1);
   b.info();
@@ -51,7 +53,7 @@ int main(int argc, char *argv[])
   std::vector<double> cz = cgh::read_coord<double>(file, b, z, 3);
 
   Foam::pointField points(z.n_nodes);
-  forAll(points, i) { points[i] = Foam::vector(cx[i], cy[i], cz[i]); }
+  forAll(points, i) { points[i] = Foam::vector(cx[i], cy[i], cz[i]) * scale; }
 
   Foam::Info << "Done!" << Foam::endl;
 
