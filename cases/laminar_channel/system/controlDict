@@ -164,6 +164,7 @@ functions
       fields  (UMean);
 
       writeFilterVolume true;
+      cache true;
       
       executeControl    writeTime;
       writeControl      writeTime;
