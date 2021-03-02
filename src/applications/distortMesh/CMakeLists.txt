@@ -1,26 +1,22 @@
-add_executable(userPostChannel userPostChannel.C channelIndex.C)
+add_executable(distortMesh distortMesh.cpp)
 
-target_include_directories(userPostChannel PUBLIC
+target_include_directories(distortMesh PUBLIC
   $ENV{FOAM_SRC}/finiteVolume/lnInclude
   $ENV{FOAM_SRC}/meshTools/lnInclude
   $ENV{FOAM_SRC}/OpenFOAM/lnInclude
   $ENV{FOAM_SRC}/OSspecific/POSIX/lnInclude
-  $ENV{FOAM_SRC}/sampling/lnInclude
   )
 
-target_link_directories(userPostChannel PUBLIC
+target_link_directories(distortMesh PUBLIC
   $ENV{FOAM_LIBBIN}
   $ENV{FOAM_LIBBIN}/$ENV{FOAM_MPI}
   )
 
-
-target_link_libraries(userPostChannel PUBLIC 
+target_link_libraries(distortMesh PUBLIC 
   finiteVolume
   meshTools
   OpenFOAM
   fileFormats
-  genericPatchFields
-  sampling
+  surfMesh
   Pstream
   )
-

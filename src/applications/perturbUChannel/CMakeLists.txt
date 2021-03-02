@@ -9,7 +9,7 @@ target_include_directories(perturbUChannel PUBLIC
 
 target_link_directories(perturbUChannel PUBLIC
   $ENV{FOAM_LIBBIN}
-  $ENV{FOAM_LIBBIN}/openmpi-system
+  $ENV{FOAM_LIBBIN}/$ENV{FOAM_MPI}
   )
 
 

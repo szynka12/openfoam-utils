@@ -9,7 +9,7 @@ target_include_directories(orthoQuality PUBLIC
 
 target_link_directories(orthoQuality PUBLIC
   $ENV{FOAM_LIBBIN}
-  $ENV{FOAM_LIBBIN}/openmpi-system
+  $ENV{FOAM_LIBBIN}/$ENV{FOAM_MPI}
   )
 
 

@@ -9,7 +9,7 @@ target_include_directories(cleanUpMirroredMesh PUBLIC
 
 target_link_directories(cleanUpMirroredMesh PUBLIC
   $ENV{FOAM_LIBBIN}
-  $ENV{FOAM_LIBBIN}/openmpi-system
+  $ENV{FOAM_LIBBIN}/$ENV{FOAM_MPI}
   )
 
 

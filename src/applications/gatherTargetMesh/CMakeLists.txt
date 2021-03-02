@@ -17,7 +17,7 @@ target_include_directories(gatherTargetMesh PUBLIC
 
 target_link_directories(gatherTargetMesh  PUBLIC
   $ENV{FOAM_LIBBIN}
-  $ENV{FOAM_LIBBIN}/openmpi-system
+  $ENV{FOAM_LIBBIN}/$ENV{FOAM_MPI}
   )
 
 target_link_libraries(gatherTargetMesh PUBLIC

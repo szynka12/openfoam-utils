@@ -9,7 +9,7 @@ target_include_directories(distortBoundaryMesh PUBLIC
 
 target_link_directories(distortBoundaryMesh PUBLIC
   $ENV{FOAM_LIBBIN}
-  $ENV{FOAM_LIBBIN}/openmpi-system
+  $ENV{FOAM_LIBBIN}/$ENV{FOAM_MPI}
   )
 
 target_link_libraries(distortBoundaryMesh PUBLIC 

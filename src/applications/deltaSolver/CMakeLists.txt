@@ -17,7 +17,7 @@ target_include_directories(deltaSolver PUBLIC
 
 target_link_directories(deltaSolver  PUBLIC
   $ENV{FOAM_LIBBIN}
-  $ENV{FOAM_LIBBIN}/openmpi-system
+  $ENV{FOAM_LIBBIN}/$ENV{FOAM_MPI}
   )
 
 target_link_libraries(deltaSolver PUBLIC

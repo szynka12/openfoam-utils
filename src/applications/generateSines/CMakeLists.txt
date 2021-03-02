@@ -17,7 +17,7 @@ target_include_directories(generateSines PUBLIC
 
 target_link_directories(generateSines PUBLIC
   $ENV{FOAM_LIBBIN}
-  $ENV{FOAM_LIBBIN}/openmpi-system
+  $ENV{FOAM_LIBBIN}/$ENV{FOAM_MPI}
   )
 
 target_link_libraries(generateSines PUBLIC

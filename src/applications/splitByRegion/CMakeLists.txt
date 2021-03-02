@@ -9,7 +9,7 @@ target_include_directories(splitByRegion PUBLIC
 
 target_link_directories(splitByRegion PUBLIC
   $ENV{FOAM_LIBBIN}
-  $ENV{FOAM_LIBBIN}/openmpi-system
+  $ENV{FOAM_LIBBIN}/$ENV{FOAM_MPI}
   )
 
 
