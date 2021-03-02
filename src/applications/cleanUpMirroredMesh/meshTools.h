@@ -41,10 +41,11 @@ inline Foam::label bound_index(const Foam::label index, const Foam::label size)
   }
 }
 
-Foam::face combine_faces(const Foam::faceList&  faces,
+std::pair<Foam::face, bool> combine_faces(const Foam::faceList&  faces,
                          const Foam::labelList& merged_faces)
 {
   Foam::face recipient_face = faces[merged_faces[0]];
+  bool is_ok = true;
   for (Foam::label facei = 1; facei < merged_faces.size(); facei++)
   {
     Foam::face donor_face = faces[merged_faces[facei]];
@@ -60,18 +61,71 @@ Foam::face combine_faces(const Foam::faceList&  faces,
       indices.second = prev_i_d;
     }
 
+    // After the rotation we assume that the donor face starts with the same
+    // point as the recipient face ends (and similarly the odther ends of the
+    // lists). For example:
+    // recipent: ( 1 2 3 5 )
+    // donor:    ( 5 6 7 1 )
+    
+
     Foam::inplaceRotateList<Foam::List, Foam::label>(recipient_face,
                                                      -indices.first);
     Foam::inplaceRotateList<Foam::List, Foam::label>(donor_face,
                                                      -indices.second - 1);
-
+    
     Foam::boolList tmp(donor_face.size(), true);
+    // Sanity check
+    if (recipient_face.first() != donor_face.last()) 
+    {
+      Foam::Info
+        << "The first and  last indices of the faces: " << Foam::nl 
+        << merged_faces[0]      << " : " << recipient_face << Foam::nl
+        << merged_faces[facei]  << " : " << donor_face << Foam::nl 
+        << "are not the same!" << Foam::endl;
+    } 
+    
     tmp.first() = false;
-    tmp.last()  = false;
+    
+    // we have a problem here when faces are connected by a single point e.g.:
+    // 1 -- 2 -- 4
+    // |   /\     \
+    // |  /  \    5
+    // | /    \  /
+    //  3       6
+    //  we should detect that and try to do something about it. Cuurent
+    //  assumption is that rotated lists will only have same first of the
+    //  vertices. The last one is different in this situation and it should be
+    //  incoroporated into the list.
+    if (recipient_face.last() == donor_face.first()) 
+    {
+      tmp.last()  = false;
+      recipient_face.append(Foam::subset(tmp, donor_face));
+    }
+    else
+    {
+      Foam::Info
+        << "\tThe last and first indices of the faces: " << Foam::nl 
+        << "\t" << merged_faces[0]      << " : " << recipient_face << Foam::nl
+        << "\t" <<merged_faces[facei]  << " : " << donor_face << Foam::nl 
+        << "are not the same! Make sure that the mesh is ok!" << Foam::endl;
 
-    recipient_face.append(Foam::subset(tmp, donor_face));
+      // Now recipient is in this position:
+      // (1 3 2)
+      // and donor:
+      // (2 6 5 4)
+      // and we try a face like:
+      // (1 3 2 6 5 4 2)
+      // so we must append the first element again and not erase anything
+
+      //donor_face.append(donor_face.first());
+      
+      //lets try doing nothing!
+      is_ok = false;
+    }
+    
+
   }
-  return recipient_face;
+  return std::make_pair(recipient_face, is_ok);
 }
 
 Foam::boolList repair_multiply_connected_cells(
@@ -111,46 +165,18 @@ Foam::boolList repair_multiply_connected_cells(
     //Foam::Info << "\t"
                //<< "Correcting faces: " << multiple_faces << Foam::endl;
 
-    // we have a problem here when faces are triangles connected by a single
-    // point:
-    // 1 -- 2 -- 4
-    // |   /\    |
-    // |  /  \   |
-    // | /    \  |
-    //  3       5
-    //  we should detect that and leave tham at peace. For now we will use a
-    //  really dirt solution 
-
-    if (multiple_faces.size() == 2)
+    auto faces_ok = combine_faces(faces, multiple_faces);
+    if (faces_ok.second)
     {
-      // we do this check two times so this will have to be refactored
-
-      Foam::face recipient_face = faces[multiple_faces[0]];
-      Foam::face donor_face = faces[multiple_faces[1]];
-      auto indices = find_matching_vertex(recipient_face, donor_face);
-
-      auto next_i_r = bound_index(indices.first + 1, recipient_face.size());
-      auto prev_i_d = bound_index(indices.second - 1, donor_face.size());
-
-      Foam::Info << (recipient_face[next_i_r] == donor_face[prev_i_d] ) 
-        << Foam::endl;
-
-      faces[multiple_faces[0]] = combine_faces(faces, multiple_faces);
-
+      faces[multiple_faces[0]] = faces_ok.first;
       for (Foam::label i = 1; i < multiple_faces.size(); i++)
       {
         bad_faces[multiple_faces[i]] = false;
       }
-
     }
     else
     {
-      faces[multiple_faces[0]] = combine_faces(faces, multiple_faces);
-
-      for (Foam::label i = 1; i < multiple_faces.size(); i++)
-      {
-        bad_faces[multiple_faces[i]] = false;
-      }
+      Foam::Info << "Not combining!" << Foam::endl;
     }
 
   }

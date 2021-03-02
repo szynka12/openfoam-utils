@@ -152,7 +152,7 @@ int main(int argc, char* argv[])
             const auto& p1_m = points[faces[mi][0]];
             // cycle the slave face until they have same points ordering
             while (!comp_vec(points[faces[si][0]], p1_m, slave_to_master,
-                             tolerance))
+                             tolerance*0.001))
             {
               inplaceRotateList<List, label>(faces[si], -1);
             }
