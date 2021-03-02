@@ -9,40 +9,43 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       dictionary;
-    location    "system";
-    object      fvSchemes;
+    class       volVectorField;
+    location    "0";
+    object      U;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-ddtSchemes
-{
-    default         backward;
-}
+dimensions      [0 1 -1 0 0 0 0];
 
-gradSchemes
-{
-    default         Gauss linear;
-}
 
-divSchemes
-{
-    default         Gauss linear;
-}
+internalField   uniform (0.135 0 0);
 
-laplacianSchemes
+boundaryField
 {
-    default         Gauss linear corrected;
-}
-
-interpolationSchemes
-{
-    default         linear;
-}
-
-snGradSchemes
-{
-    default         corrected;
+    ym
+    {
+        type            noSlip;
+    }
+    yp
+    {
+        type            noSlip;
+    }
+    xp
+    {
+        type            cyclic;
+    }
+    xm
+    {
+        type            cyclic;
+    }
+    zm
+    {
+        type            cyclic;
+    }
+    zp
+    {
+        type            cyclic;
+    }
 }
 
 

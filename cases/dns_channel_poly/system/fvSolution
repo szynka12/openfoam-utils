@@ -19,25 +19,24 @@ solvers
 {
     p
     {
-        solver          GAMG;
-        tolerance       0;
-        relTol          0.1;
-        smoother        DIC;
-	      nPreSweeps      	1;              
-    	  nPostSweeps     	2;              
-    	  nFinestSweeps   	2;              
-    	  scaleCorrection 	true;           
-    	  directSolveCoarsestLevel false; 
-    	  cacheAgglomeration 	on;  
-	      agglomerator    	faceAreaPair;   
-    	  mergeLevels     	1;
+        solver                    GAMG;
+        tolerance                 0;
+        relTol                    0.1;
+        smoother                  DIC;
+	      nPreSweeps      	        1;              
+    	  nPostSweeps     	        2;              
+    	  nFinestSweeps   	        2;              
+    	  scaleCorrection 	        true;           
+    	  directSolveCoarsestLevel  false; 
+    	  cacheAgglomeration 	      on;  
+	      agglomerator    	        faceAreaPair;   
+    	  mergeLevels     	        1;
     }
 
     pFinal
     {
         $p;
-        smoother        DICGaussSeidel;
-        tolerance       1e-06;
+        tolerance       1e-05;
         relTol          0;
     }
 

@@ -80,8 +80,8 @@ averageSettings
 
 functions
 {
-    //#include "runPostDict"  
-    #include "avgToTarget"
+    #include "runPostDict"  
+    //#include "avgToTarget"
     
 }
 

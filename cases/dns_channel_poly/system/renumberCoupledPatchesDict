@@ -10,40 +10,24 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    location    "system";
-    object      fvSchemes;
+    object      renumberCoupledPatchesDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-ddtSchemes
-{
-    default         backward;
-}
+tolerance 1e-3;
 
-gradSchemes
-{
-    default         Gauss linear;
-}
+patches
+(
+  {
+    master        xp;
+    slave         xm;
+    slaveToMaster (6.28318530718 0 0);
+  }
 
-divSchemes
-{
-    default         Gauss linear;
-}
+  {
+    master        zp;
+    slave         zm;
+    slaveToMaster (0 0 3.14159265358979323846264);
+  }
+);
 
-laplacianSchemes
-{
-    default         Gauss linear corrected;
-}
-
-interpolationSchemes
-{
-    default         linear;
-}
-
-snGradSchemes
-{
-    default         corrected;
-}
-
-
-// ************************************************************************* //
