@@ -17,12 +17,12 @@ FoamFile
 scale    1;
 
 r 1;
-R 3;
+R 2.5;
 
-x 8;
-y 8; 
-z 8;
-wake 40;
+x #eval{2*$r*5};
+y #eval{2*$r*6}; 
+z #eval{2*$r*6};
+wake #eval{2*$r*25-$x};
 
 geometry
 {
@@ -169,6 +169,9 @@ vertices
   #eval{ vector ( $wake, $y, $z     ) } //83
 );
 
+inlet_out 30;
+inlet_gr 0.25;
+
 blocks
 (
   hex (0 1 2 3 4 5 6 7)       ($N $bl $N) simpleGrading (1 $bl_gr 1)
@@ -178,48 +181,50 @@ blocks
   hex (5 10 11 6 4 14 15 7)   ($N $bl $N) simpleGrading (1 $bl_gr 1)
   hex (3 2 1 0 13 9 8 12)     ($N $bl $N) simpleGrading (1 #eval{1/$bl_gr} 1)
 
-  hex (16 17 1 0 18 19 5 4)    ($N $out $N) simpleGrading (1 1 1)
-  hex (20 21 8 1 22 23 10 5)   ($N $out $N) simpleGrading (1 1 1)
-  hex (24 25 12 8 26 27 14 10) ($N $out $N) simpleGrading (1 1 1)
-  hex (28 29 0 12 30 31 4 14) ($N $out $N) simpleGrading (1 1 1)
-  hex (0 1 32 33 12 8 34 35) ($N $out $N) simpleGrading (1 1 1)
-  hex (36 37 10 5 39 38 14 4) ($N $out $N) simpleGrading (1 1 1)
+  //hex (16 17 1 0 18 19 5 4)    ($N $out $N) simpleGrading (1 1 1)
+  //hex (20 21 8 1 22 23 10 5)   ($N $out $N) simpleGrading (1 1 1)
+  //hex (24 25 12 8 26 27 14 10) ($N $out $N) simpleGrading (1 1 1)
+  //hex (0 1 32 33 12 8 34 35) ($N $out $N) simpleGrading (1 1 1)
+  //hex (36 37 10 5 39 38 14 4) ($N $out $N) simpleGrading (1 1 1)
 
-  hex (32 40 41 34 1 20 21 8) ($out $N $out) simpleGrading (1 1 1)
-  hex (22 23 10 5 42 43 37 36) ($N $out $out) simpleGrading (1 1 1)
-  hex (44 33 35 45 29 0 12 28) ($out $N $out) simpleGrading (1 1 1)
-  hex (4 14 30 31 39 38 47 46) ($N $out $out) simpleGrading (1 1 1)
-  hex (49 32 33 48 17 1 0 16) ($out $N $out) simpleGrading (1 1 1)
-  hex (34 51 50 35 8 24 25 12) ($out $N $out) simpleGrading (1 1 1)
-  hex (19 5 4 18 53 36 39 52) ($out $N $out) simpleGrading (1 1 1)
-  hex (10 26 27 14 37 55 54 38) ($out $N $out) simpleGrading (1 1 1)
-  
-  hex (56 40 32 49 57 20 1 17) ($out $out $out) simpleGrading (1 1 1)
-  hex (57 20 1 17 58 22 5 19) ($out $out $N) simpleGrading (1 1 1)
-  hex (58 22 5 19 59 42 36 53) ($out $out $out) simpleGrading (1 1 1)
-  
-  hex (60 48 33 44 61 16 0 29) ($out $out $out) simpleGrading (1 1 1)
-  hex (61 16 0 29 62 18 4 31) ($out $out $N) simpleGrading (1 1 1)
-  hex (62 18 4 31 63 52 39 46) ($out $out $out) simpleGrading (1 1 1)
-  
-  hex (35 50 64 45 12 25 65 28) ($out $out $out) simpleGrading (1 1 1)
-  hex (12 25 65 28 14 27 66 30) ($out $out $N) simpleGrading (1 1 1)
-  hex (14 27 66 30 38 54 67 47) ($out $out $out) simpleGrading (1 1 1)
+  // Inlet middle slice
+  hex (28 29 0 12 30 31 4 14) ($N $inlet_out $N) simpleGrading (1 $inlet_gr 1)    //sphere
+  hex (61 16 0 29 62 18 4 31) ($inlet_out $out $N) simpleGrading ($inlet_gr 1 1)
+  hex (12 25 65 28 14 27 66 30) ($out $inlet_out $N) simpleGrading (1 #eval{1/$inlet_gr} 1)
 
-  hex (41 68 51 34 21 69 24 8) ($out $out $out) simpleGrading (1 1 1)
-  hex (21 69 24 8 23 70 26 10) ($out $out $N ) simpleGrading (1 1 1)
-  hex (23 70 26 10 43 71 55 37) ($out $out $out) simpleGrading (1 1 1)
+  //hex (32 40 41 34 1 20 21 8) ($out $N $out) simpleGrading (1 1 1)
+  //hex (22 23 10 5 42 43 37 36) ($N $out $out) simpleGrading (1 1 1)
+  //hex (44 33 35 45 29 0 12 28) ($out $N $out) simpleGrading (1 1 1)
+  //hex (4 14 30 31 39 38 47 46) ($N $out $out) simpleGrading (1 1 1)
+  //hex (49 32 33 48 17 1 0 16) ($out $N $out) simpleGrading (1 1 1)
+  //hex (34 51 50 35 8 24 25 12) ($out $N $out) simpleGrading (1 1 1)
+  //hex (19 5 4 18 53 36 39 52) ($out $N $out) simpleGrading (1 1 1)
+  //hex (10 26 27 14 37 55 54 38) ($out $N $out) simpleGrading (1 1 1)
+  
+  //hex (56 40 32 49 57 20 1 17) ($out $out $out) simpleGrading (1 1 1)
+  //hex (57 20 1 17 58 22 5 19) ($out $out $N) simpleGrading (1 1 1)
+  //hex (58 22 5 19 59 42 36 53) ($out $out $out) simpleGrading (1 1 1)
+  
+  //hex (60 48 33 44 61 16 0 29) ($out $out $out) simpleGrading (1 1 1)
+  //hex (62 18 4 31 63 52 39 46) ($out $out $out) simpleGrading (1 1 1)
+  
+  //hex (35 50 64 45 12 25 65 28) ($out $out $out) simpleGrading (1 1 1)
+  //hex (14 27 66 30 38 54 67 47) ($out $out $out) simpleGrading (1 1 1)
 
-  ////wake
-  hex (56 72 76 40 57 73 77 20) ($wake_N $out $out) simpleGrading (1 1 1)
-  hex (57 73 77 20 58 74 78 22) ($wake_N $out $N) simpleGrading (1 1 1)
-  hex (58 74 78 22 59 75 79 42) ($wake_N $out $out) simpleGrading (1 1 1)
-  hex (40 76 80 41 20 77 81 21) ($wake_N $N $out) simpleGrading (1 1 1)
-  hex (20 77 81 21 22 78 82 23) ($wake_N $N $N) simpleGrading (1 1 1)
-  hex (22 78 82 23 42 79 83 43) ($wake_N $N $out) simpleGrading (1 1 1)
-  hex (41 80 84 68 21 81 85 69) ($wake_N $out $out) simpleGrading (1 1 1)
-  hex (21 81 85 69 23 82 86 70) ($wake_N $out $N) simpleGrading (1 1 1)
-  hex (23 82 86 70 43 83 87 71) ($wake_N $out $out) simpleGrading (1 1 1)
+  //hex (41 68 51 34 21 69 24 8) ($out $out $out) simpleGrading (1 1 1)
+  //hex (21 69 24 8 23 70 26 10) ($out $out $N ) simpleGrading (1 1 1)
+  //hex (23 70 26 10 43 71 55 37) ($out $out $out) simpleGrading (1 1 1)
+
+  //////wake
+  //hex (56 72 76 40 57 73 77 20) ($wake_N $out $out) simpleGrading (1 1 1)
+  //hex (57 73 77 20 58 74 78 22) ($wake_N $out $N) simpleGrading (1 1 1)
+  //hex (58 74 78 22 59 75 79 42) ($wake_N $out $out) simpleGrading (1 1 1)
+  //hex (40 76 80 41 20 77 81 21) ($wake_N $N $out) simpleGrading (1 1 1)
+  //hex (20 77 81 21 22 78 82 23) ($wake_N $N $N) simpleGrading (1 1 1)
+  //hex (22 78 82 23 42 79 83 43) ($wake_N $N $out) simpleGrading (1 1 1)
+  //hex (41 80 84 68 21 81 85 69) ($wake_N $out $out) simpleGrading (1 1 1)
+  //hex (21 81 85 69 23 82 86 70) ($wake_N $out $N) simpleGrading (1 1 1)
+  //hex (23 82 86 70 43 83 87 71) ($wake_N $out $out) simpleGrading (1 1 1)
 );
 
 edges
@@ -264,133 +269,133 @@ faces
 
 boundary
 (
-  sphere
-  {
-    type wall;
-    faces 
-    (
-      (3 2 9 13)   
-      (3 2 6 7)   
-      (2 9 11 6)  
-      (9 11 15 13)
-      (7 6 11 15) 
-      (3 13 7 15)
-    );
-  }
-  inlet
-  {
-    type patch;
-    faces 
-    (
-     (44 45 28 29)
-     (29 28 30 31)
-     (31 30 47 46)
-     (60 44 29 61)
-     (61 29 31 62)
-     (62 31 46 63)
-     (45 64 65 28)
-     (28 65 66 30)
-     (30 66 67 47)
-    );
-  }
-  yp
-  {
-    type cyclic;
+  //sphere
+  //{
+    //type wall;
+    //faces 
+    //(
+      //(3 2 9 13)   
+      //(3 2 6 7)   
+      //(2 9 11 6)  
+      //(9 11 15 13)
+      //(7 6 11 15) 
+      //(3 13 7 15)
+    //);
+  //}
+  //inlet
+  //{
+    //type patch;
+    //faces 
+    //(
+     //(44 45 28 29)
+     //(29 28 30 31)
+     //(31 30 47 46)
+     //(60 44 29 61)
+     //(61 29 31 62)
+     //(62 31 46 63)
+     //(45 64 65 28)
+     //(28 65 66 30)
+     //(30 66 67 47)
+    //);
+  //}
+  //yp
+  //{
+    //type cyclic;
 
-    neighbourPatch ym;
-    faces 
-    (
-     (50 51 24 25)
-     (25 24 26 27)
-     (27 26 55 54)
-     (64 50 25 65)
-     (65 25 27 66)
-     (66 27 54 67)
-     (51 68 69 24)
-     (24 69 70 26)
-     (26 70 71 55)
-     (68 84 85 69)
-     (69 85 86 70)
-     (70 86 87 71)
-    );
-  }
-  ym
-  {
-    type cyclic;
-    neighbourPatch yp;
-    faces 
-    (
-     (48 49 17 16)
-     (16 17 19 18)
-     (18 19 53 52)
-     (49 56 57 17)
-     (17 57 58 19)
-     (19 58 59 53)
-     (60 48 16 61)
-     (61 16 18 62)
-     (62 18 52 63)
-     (56 72 73 57)
-     (57 73 74 58)
-     (58 74 75 59)
-    );
-  }
-  zp
-  {
-    type cyclic;
-    neighbourPatch zm;
-    faces 
-    (
-     (52 53 36 39)
-     (39 36 37 38)
-     (38 37 55 54)
-     (46 39 38 47)
-     (36 42 43 37)
-     (63 52 39 46)
-     (53 59 42 36)
-     (47 38 54 67)
-     (37 43 71 55)
-     (59 75 79 42)
-     (42 79 83 43)
-     (43 83 87 71)
-    );
-  }
-  zm
-  {
-    type cyclic;
-    neighbourPatch zp;
-    faces 
-    (
-     (48 49 32 33)
-     (32 34 35 33)
-     (35 34 51 50)
-     (32 40 41 34)
-     (44 33 35 45)
-     (60 48 33 44)
-     (49 56 40 32)
-     (34 41 68 51)
-     (45 35 50 64)
-     (56 72 76 40)
-     (40 76 80 41)
-     (41 80 84 68)
-    );
-  }
-  outlet
-  {
-    type patch;
-    faces
-    (
-      (72 76 77 73)
-      (73 77 78 74)
-      (74 78 79 75)
-      (76 80 81 77)
-      (77 81 82 78)
-      (78 82 83 79)
-      (80 84 85 81)
-      (81 85 86 82)
-      (82 86 87 83)
-    );
+    //neighbourPatch ym;
+    //faces 
+    //(
+     //(50 51 24 25)
+     //(25 24 26 27)
+     //(27 26 55 54)
+     //(64 50 25 65)
+     //(65 25 27 66)
+     //(66 27 54 67)
+     //(51 68 69 24)
+     //(24 69 70 26)
+     //(26 70 71 55)
+     //(68 84 85 69)
+     //(69 85 86 70)
+     //(70 86 87 71)
+    //);
+  //}
+  //ym
+  //{
+    //type cyclic;
+    //neighbourPatch yp;
+    //faces 
+    //(
+     //(48 49 17 16)
+     //(16 17 19 18)
+     //(18 19 53 52)
+     //(49 56 57 17)
+     //(17 57 58 19)
+     //(19 58 59 53)
+     //(60 48 16 61)
+     //(61 16 18 62)
+     //(62 18 52 63)
+     //(56 72 73 57)
+     //(57 73 74 58)
+     //(58 74 75 59)
+    //);
+  //}
+  //zp
+  //{
+    //type cyclic;
+    //neighbourPatch zm;
+    //faces 
+    //(
+     //(52 53 36 39)
+     //(39 36 37 38)
+     //(38 37 55 54)
+     //(46 39 38 47)
+     //(36 42 43 37)
+     //(63 52 39 46)
+     //(53 59 42 36)
+     //(47 38 54 67)
+     //(37 43 71 55)
+     //(59 75 79 42)
+     //(42 79 83 43)
+     //(43 83 87 71)
+    //);
+  //}
+  //zm
+  //{
+    //type cyclic;
+    //neighbourPatch zp;
+    //faces 
+    //(
+     //(48 49 32 33)
+     //(32 34 35 33)
+     //(35 34 51 50)
+     //(32 40 41 34)
+     //(44 33 35 45)
+     //(60 48 33 44)
+     //(49 56 40 32)
+     //(34 41 68 51)
+     //(45 35 50 64)
+     //(56 72 76 40)
+     //(40 76 80 41)
+     //(41 80 84 68)
+    //);
+  //}
+  //outlet
+  //{
+    //type patch;
+    //faces
+    //(
+      //(72 76 77 73)
+      //(73 77 78 74)
+      //(74 78 79 75)
+      //(76 80 81 77)
+      //(77 81 82 78)
+      //(78 82 83 79)
+      //(80 84 85 81)
+      //(81 85 86 82)
+      //(82 86 87 83)
+    //);
 
-  }
+  //}
 );
 
 mergePatchPairs
