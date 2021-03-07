@@ -1,0 +1,74 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2006                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+ddtSchemes
+{
+    default         steadyState;
+}
+
+gradSchemes
+{
+    //default         Gauss skewCorrected linear;
+    default         none;
+    grad(U)         Gauss skewCorrected linear;
+    grad(p)         Gauss skewCorrected linear;
+    grad((1|((1|(1|A(U)))-H(1)))) Gauss skewCorrected linear;
+    grad(((1|((1|(1|A(U)))-H(1)))-(1|A(U)))) Gauss skewCorrected linear;
+    //grad(p)         Gauss skewCorrected pointLinear; // a bit better
+}
+
+divSchemes
+{
+    default         none;
+    div((nuEff*dev2(T(grad(U)))))   Gauss skewCorrected linear;
+    div(phi,U)                      Gauss skewCorrected linear;
+}
+
+laplacianSchemes
+{
+    default         none;
+    laplacian(nuEff,U)                    Gauss skewCorrected linear skewCorrected corrected;
+    laplacian((1|((1|(1|A(U)))-H(1))),p)  Gauss skewCorrected filteredLinear phi skewCorrected corrected; //this helped 
+    laplacian((1|A(U)),p)                 Gauss skewCorrected clippedLinear 1 skewCorrected corrected;
+    //default         Gauss linear uncorrected;
+}
+
+interpolationSchemes
+{
+    default         none;
+    flux(U)                                           skewCorrected linear;
+    flux(HbyA)                                        skewCorrected linear;
+    interpolate(((1|((1|(1|A(U)))-H(1)))-(1|A(U))))   skewCorrected linear; 
+}
+
+snGradSchemes
+{
+    default         none;
+    snGrad(p)       skewCorrected corrected;
+}
+
+
+geometry
+{
+    type        stabilised;
+    //minAspect   1;     // when to start blending lower-order method
+    //maxAspect   2;    // when to use lower-order method only
+    //relax 1;
+}
+
+
+// ************************************************************************* //

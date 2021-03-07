@@ -1,0 +1,288 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2012                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _7bdb509494-20201222 OPENFOAM=2012
+Arch   : "LSB;label=32;scalar=64"
+Exec   : checkMesh
+Date   : Mar 02 2021
+Time   : 13:45:38
+Host   : pop-os
+PID    : 299136
+I/O    : uncollated
+Case   : /home/wsadowski/Documents/Projekty/openfoam-utils/cases/euler_channel/poly
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+Create mesh for time = 0
+
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2012                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _7bdb509494-20201222 OPENFOAM=2012
+Arch   : "LSB;label=32;scalar=64"
+Exec   : checkMesh
+Date   : Mar 02 2021
+Time   : 14:01:06
+Host   : pop-os
+PID    : 302790
+I/O    : uncollated
+Case   : /home/wsadowski/Documents/Projekty/openfoam-utils/cases/euler_channel/poly
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+Create mesh for time = 0
+
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2012                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _7bdb509494-20201222 OPENFOAM=2012
+Arch   : "LSB;label=32;scalar=64"
+Exec   : checkMesh
+Date   : Mar 02 2021
+Time   : 14:01:59
+Host   : pop-os
+PID    : 302907
+I/O    : uncollated
+Case   : /home/wsadowski/Documents/Projekty/openfoam-utils/cases/euler_channel/poly
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+Create mesh for time = 0
+
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2012                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _7bdb509494-20201222 OPENFOAM=2012
+Arch   : "LSB;label=32;scalar=64"
+Exec   : checkMesh
+Date   : Mar 02 2021
+Time   : 14:03:35
+Host   : pop-os
+PID    : 303371
+I/O    : uncollated
+Case   : /home/wsadowski/Documents/Projekty/openfoam-utils/cases/euler_channel/poly
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+Create mesh for time = 0
+
+Time = 0
+
+Mesh stats
+    points:           91138
+    faces:            113672
+    internal faces:   110552
+    cells:            16669
+    faces per cell:   13.45155678
+    boundary patches: 6
+    point zones:      0
+    face zones:       0
+    cell zones:       0
+
+Overall number of cells of each type:
+    hexahedra:     0
+    prisms:        0
+    wedges:        0
+    pyramids:      0
+    tet wedges:    0
+    tetrahedra:    0
+    polyhedra:     16669
+    Breakdown of polyhedra by number of faces:
+        faces   number of cells
+            8   4
+            9   278
+           10   440
+           11   1617
+           12   2694
+           13   3340
+           14   3697
+           15   2515
+           16   1404
+           17   473
+           18   176
+           19   21
+           20   10
+
+Checking topology...
+    Boundary definition OK.
+    Cell to face addressing OK.
+    Point usage OK.
+    Upper triangular ordering OK.
+    Face vertices OK.
+    Number of regions: 1 (OK).
+
+Checking patch topology for multiply connected surfaces...
+                   Patch    Faces   Points                  Surface topology
+                      zp      527     1056  ok (non-closed singly connected)
+                      zm      527     1054  ok (non-closed singly connected)
+                      xm      523     1048  ok (non-closed singly connected)
+                      xp      523     1048  ok (non-closed singly connected)
+                      yp      510     1022  ok (non-closed singly connected)
+                      ym      510     1022  ok (non-closed singly connected)
+
+Checking faceZone topology for multiply connected surfaces...
+    No faceZones found.
+
+Checking basic cellZone addressing...
+    No cellZones found.
+
+Checking geometry...
+    Overall domain bounding box (0 -0.5 0) (1 0.5 1)
+    Mesh has 3 geometric (non-empty/wedge) directions (1 1 1)
+    Mesh has 3 solution (non-empty) directions (1 1 1)
+    Boundary openness (9.945747929e-17 7.401486831e-17 5.782411587e-17) OK.
+    Max cell openness = 1.382938665e-16 OK.
+    Max aspect ratio = 2.888969528 OK.
+    Minimum face area = 5.979159663e-06. Maximum face area = 0.002771788864.  Face area magnitudes OK.
+    Min volume = 1.016336204e-05. Max volume = 0.0001077013413.  Total volume = 1.  Cell volumes OK.
+    Mesh non-orthogonality Max: 22.37899268 average: 3.790590848
+    Non-orthogonality check OK.
+    Face pyramids OK.
+    Max skewness = 1.821875301 OK.
+    Coupled point location match (average 0) OK.
+
+Mesh OK.
+
+End
+
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2012                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _7bdb509494-20201222 OPENFOAM=2012
+Arch   : "LSB;label=32;scalar=64"
+Exec   : checkMesh
+Date   : Mar 03 2021
+Time   : 10:07:19
+Host   : pop-os
+PID    : 342210
+I/O    : uncollated
+Case   : /home/wsadowski/Documents/Projekty/openfoam-utils/cases/simple_channel/poly_inviscid
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+Create mesh for time = 0
+
+Time = 0
+
+Mesh stats
+    points:           91138
+    faces:            113672
+    internal faces:   110552
+    cells:            16669
+    faces per cell:   13.45155678
+    boundary patches: 6
+    point zones:      0
+    face zones:       0
+    cell zones:       0
+
+Overall number of cells of each type:
+    hexahedra:     0
+    prisms:        0
+    wedges:        0
+    pyramids:      0
+    tet wedges:    0
+    tetrahedra:    0
+    polyhedra:     16669
+    Breakdown of polyhedra by number of faces:
+        faces   number of cells
+            8   4
+            9   278
+           10   440
+           11   1617
+           12   2694
+           13   3340
+           14   3697
+           15   2515
+           16   1404
+           17   473
+           18   176
+           19   21
+           20   10
+
+Checking topology...
+    Boundary definition OK.
+    Cell to face addressing OK.
+    Point usage OK.
+    Upper triangular ordering OK.
+    Face vertices OK.
+    Number of regions: 1 (OK).
+
+Checking patch topology for multiply connected surfaces...
+                   Patch    Faces   Points                  Surface topology
+                      zp      527     1056  ok (non-closed singly connected)
+                      zm      527     1054  ok (non-closed singly connected)
+                      xm      523     1048  ok (non-closed singly connected)
+                      xp      523     1048  ok (non-closed singly connected)
+                      yp      510     1022  ok (non-closed singly connected)
+                      ym      510     1022  ok (non-closed singly connected)
+
+Checking faceZone topology for multiply connected surfaces...
+    No faceZones found.
+
+Checking basic cellZone addressing...
+    No cellZones found.
+
+Checking geometry...
+    Overall domain bounding box (0 -0.5 0) (1 0.5 1)
+    Mesh has 3 geometric (non-empty/wedge) directions (1 1 1)
+    Mesh has 3 solution (non-empty) directions (1 1 1)
+    Boundary openness (9.945747929e-17 7.401486831e-17 5.782411587e-17) OK.
+    Max cell openness = 1.382938665e-16 OK.
+    Max aspect ratio = 2.888969528 OK.
+    Minimum face area = 5.979159663e-06. Maximum face area = 0.002771788864.  Face area magnitudes OK.
+    Min volume = 1.016336221e-05. Max volume = 0.0001077013424.  Total volume = 1.  Cell volumes OK.
+    Mesh non-orthogonality Max: 22.37320934 average: 3.790550206
+    Non-orthogonality check OK.
+    Face pyramids OK.
+    Max skewness = 1.821843996 OK.
+    Coupled point location match (average 0) OK.
+
+Mesh OK.
+
+End
+

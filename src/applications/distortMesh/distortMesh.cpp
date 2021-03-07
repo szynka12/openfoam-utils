@@ -1,5 +1,7 @@
 
 #include "fvCFD.H"
+#include <IOobjectList.H>
+#include <pointSet.H>
 
 int main(int argc, char* argv[])
 {
@@ -31,6 +33,36 @@ int main(int argc, char* argv[])
   const auto n_points = mesh.nPoints();
   labelList boundary_indices(n_points, -1);
   boolList is_feature_point(n_points, false);
+  boolList fixed_points(n_points, false);
+
+  const Foam::wordList def;
+  const auto set_names = 
+    settings.getOrDefault<Foam::wordList>("fixedPointSets", def);
+  
+  Foam::IOobjectList objects
+  (
+      mesh,
+      mesh.time().findInstance
+      (
+          polyMesh::meshSubDir/"sets",
+          word::null,
+          IOobject::READ_IF_PRESENT,
+          mesh.facesInstance()
+      ),
+      polyMesh::meshSubDir/"sets"
+  );
+
+  forAll(set_names, i)
+  {
+    
+    const pointSet p(mesh, set_names[i]); 
+    for(auto point = p.begin(); point != p.end(); point ++)
+    {
+      fixed_points[*point] = true;
+    }
+
+  }
+
 
 
   auto& b_mesh     = mesh.boundaryMesh();
@@ -72,7 +104,7 @@ int main(int argc, char* argv[])
 
   forAll( points , pi)
   {
-    if(!is_feature_point[pi] || ignore_features)
+    if ((!is_feature_point[pi] || ignore_features) && !fixed_points[pi]  )
     {
       const auto r_v = r_gen.sample01<Foam::vector>();
       

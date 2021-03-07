@@ -43,5 +43,6 @@ dependencies/build
 # paraview
 *.pvsm
 
-# gmsh
+# Meshes
 *.msh
+*.cgns
