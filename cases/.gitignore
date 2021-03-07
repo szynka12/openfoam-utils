@@ -11,6 +11,8 @@ constant/extendedFeatureEdgeMesh
 constant/polyMesh/*
 */polyMesh/*
 targetMesh
+VTK
+.setSet
 
 constant/cellToRegion
 

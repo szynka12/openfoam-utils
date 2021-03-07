@@ -1,0 +1,101 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2012                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      topoSetDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+actions
+(
+    {
+        name    boundary_faces;
+        type    faceSet;
+        action  new;
+        source  boundaryToFace;
+    }
+
+    {
+        name    boundary_cells;
+        type    cellSet;
+        action  new;
+        source  faceToCell;
+        set     boundary_faces;
+        option  any;
+    }
+    
+    {
+        name    fixed_points;
+        type    pointSet;
+        action  new;
+        source  cellToPoint;
+        set     boundary_cells;
+        option  all;
+    }
+
+    // Example: pick up internal faces on outside of cellSet
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // Load initial cellSet
+    //{
+        //name    c0;
+        //type    cellSet;
+        //action  new;
+        //source  labelToCell;
+        //value   (12 13 56);
+    //}
+
+    //// Get all faces in cellSet
+    //{
+        //name    f0;
+        //type    faceSet;
+        //action  new;
+        //source  cellToFace;
+        //set     c0;
+        //option  all;
+    //}
+
+    //// Determine inverse cellSet
+    //{
+        //name    c1;
+        //type    cellSet;
+        //action  new;
+        //source  cellToCell;
+        //set     c0;
+    //}
+    //{
+        //name    c1;
+        //type    cellSet;
+        //action  invert;
+    //}
+
+    //// Keep in f0 all faces in c1
+    //{
+        //name    f0;
+        //type    faceSet;
+        //action  subset;
+        //source  cellToFace;
+        //set     c1;
+        //option  all;
+    //}
+
+    //// Example: create cellZone from geometric region
+    //{
+        //name    c0;
+        //type    cellZoneSet;
+        //action  new;
+        //source  boxToCell;
+        //box     (0.04 0 0)(0.06 100 100);
+    //}
+);
+
+// ************************************************************************* //
