@@ -1,0 +1,10 @@
+turbulenceFields1
+{
+    type            turbulenceFields;
+    libs            (fieldFunctionObjects);
+
+    fields          (k epsilon);
+
+    ${/averageControl}; 
+    ${/execControl};
+}

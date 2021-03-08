@@ -1,0 +1,43 @@
+ax_sample
+{
+    type sets;
+    libs                  (sampling);
+    interpolationScheme   cellPointFace;
+    setFormat             gnuplot;
+    fields                (U UMean UPrime UPrime2Mean p pMean);
+
+    sets
+    (
+        axis
+        {
+          type    uniform;
+          nPoints 1000;
+          axis    x;
+          start   (0 0 0);
+          end     (25 0 0);
+        }
+        
+        A
+        {
+          type    cloud;
+          axis    xyz;
+          nPoints 1;
+          points  ((1 0.2 0));
+        }
+        
+        B
+        {
+          type    cloud;
+          axis    xyz;
+          nPoints 1;
+          points  
+          (
+            (1 #eval{ cos(degToRad(67.5))*0.2} #eval{sin(degToRad(67.5))*0.2})
+          );
+        }
+    );
+    
+    ${/averageControl}; 
+    ${/execControl};
+
+}

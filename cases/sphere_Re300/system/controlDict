@@ -1,0 +1,82 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2006                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+dt300     0.005;
+dt500     0.003;
+dt1000    0.0025;
+
+domain_l    34.5;
+
+fft         #eval{$domain_l};
+
+
+application     pisoFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         #eval{20*$fft};
+
+deltaT          $dt300;
+
+writeControl    adjustableRunTime;
+
+writeInterval   $fft;
+
+purgeWrite      3;
+
+writeFormat     binary;
+
+writePrecision  16;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   12;
+
+runTimeModifiable true;
+
+averageControl
+{
+    timeStart       #eval{10*$fft};
+    writeControl    writeTime;
+    writeInterval   1;
+}
+
+executeControl
+{
+    executeControl  writeTime;
+    executeInterval 1;
+}
+
+functions
+{
+  #include "post/modelled_fields"
+  #include "post/cd"
+  #include "post/average_Up"
+  #include "post/UPrim"
+  #include "post/ax_sample"
+
+}
+
+
+// ************************************************************************* //

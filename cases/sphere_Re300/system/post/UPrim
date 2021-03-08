@@ -1,0 +1,15 @@
+UPrime
+{
+    type            subtract;
+    libs            (fieldFunctionObjects);
+
+    // Mandatory (inherited) entry (runtime modifiable)
+    fields          (U UMean);
+
+    // Optional (inherited) entries
+    result          UPrime;
+    
+    ${/averageControl}; 
+    ${/execControl};
+
+}

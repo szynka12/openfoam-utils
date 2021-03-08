@@ -1,0 +1,36 @@
+forceCoeffs1
+{
+    type            forceCoeffs;
+    libs            ("libforces.so");
+    patches         (sphere);
+
+    p               p;
+    U               U;
+    
+    rho         rhoInf;
+    rhoInf      1;
+
+    // Reference pressure [Pa]
+    pRef            0;
+
+    // Centre of rotation for moment calculations
+    CofR            (0 0 0);
+
+    // Lift direction
+    liftDir         (0 0 1);
+
+    // Drag direction
+    dragDir         (1 0 0);
+
+    // Pitch axis
+    pitchAxis       (0 1 0);
+
+    // Freestream velocity magnitude [m/s]
+    magUInf         1;
+
+    // Reference length [m]
+    lRef            1;
+
+    // Reference area [m2]
+    Aref            #eval{pi()*0.5*0.5};
+}

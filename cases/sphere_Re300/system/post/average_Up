@@ -1,0 +1,23 @@
+fieldAverage1
+{
+    type            fieldAverage;
+    libs            (fieldFunctionObjects);
+
+    fields
+    (
+        U
+        {
+            mean        yes;
+            prime2Mean  yes;
+            base        time;
+        }
+        p
+        {
+            mean        yes;
+            prime2Mean  yes;
+            base        time;
+       }
+    );
+    
+    ${/averageControl}
+}
