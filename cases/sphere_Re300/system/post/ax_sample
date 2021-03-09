@@ -17,6 +17,24 @@ ax_sample
           end     (25 0 0);
         }
         
+    );
+    
+    ${/averageControl}; 
+    ${/execControl};
+
+}
+
+
+point_sample_inst
+{
+    type                  sets;
+    libs                  (sampling);
+    interpolationScheme   cellPointFace;
+    setFormat             gnuplot;
+    fields                (U p);
+
+    sets 
+    (
         A
         {
           type    cloud;
@@ -36,8 +54,38 @@ ax_sample
           );
         }
     );
-    
-    ${/averageControl}; 
-    ${/execControl};
 
+  }
+
+AAAA
+{
+    type                  sets;
+    libs                  (sampling);
+    interpolationScheme   cellPointFace;
+    setFormat             gnuplot;
+    fields                (UMean UPrime UPrime2Mean);
+
+    sets 
+    (
+        A
+        {
+          type    cloud;
+          axis    xyz;
+          nPoints 1;
+          points  ((1 0.2 0));
+        }
+        
+        B
+        {
+          type    cloud;
+          axis    xyz;
+          nPoints 1;
+          points  
+          (
+            (1 #eval{ cos(degToRad(67.5))*0.2} #eval{sin(degToRad(67.5))*0.2})
+          );
+        }
+    );
+
+    timeStart  $:averageControl.timeStart;
 }
