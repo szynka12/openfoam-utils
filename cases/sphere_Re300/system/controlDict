@@ -15,6 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+libs (userFunctionObjects);
 
 dt300     0.005;
 dt500     0.003;
@@ -39,7 +40,7 @@ deltaT          $dt300;
 
 writeControl    adjustableRunTime;
 
-writeInterval   $fft;
+writeInterval   0.01;//$fft;
 
 purgeWrite      3;
 
@@ -57,7 +58,7 @@ runTimeModifiable true;
 
 averageControl
 {
-    timeStart       #eval{10*$fft};
+    timeStart       #eval{0*$fft};
     writeControl    writeTime;
     writeInterval   1;
 }
@@ -70,11 +71,40 @@ executeControl
 
 functions
 {
-  #include "post/modelled_fields"
-  #include "post/cd"
-  #include "post/average_Up"
-  #include "post/UPrim"
+  #include      "post/modelled_fields"
+  #includeFunc  "yPlus"
+  #include      "post/cd"
+  #include      "post/average_Up"
+  #include      "post/UPrim"
+  
+  resolvedK
+  {
+      type    resolvedKineticEnergy;
+      lib     (userFunctionObjects);
+      ${/averageControl};
+      ${/executeControl};
+  }
+  
+  visRatio
+  {
+      type    visRatio;
+      lib     (userFunctionObjects);
+      ${/averageControl};
+      ${/executeControl};
+  }
+
+  M
+  {
+      type    M;
+      lib     (userFunctionObjects);
+      k       turbulenceProperties:k;
+      ${/averageControl};
+      ${/executeControl};
+  }
+  
   #include "post/ax_sample"
+  #includeFunc "Lambda2"
+  #includeFunc "Q"
 
 }
 

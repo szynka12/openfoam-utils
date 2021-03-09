@@ -44,7 +44,7 @@ geometry
 rsq3 #eval{$r / sqrt(3)};
 Rsq3 #eval{$R / sqrt(3)};
 
-resolution 3;
+resolution 5;
 
 bl #eval{$resolution * 3};//30;
 N #eval{$resolution * 4};//40;

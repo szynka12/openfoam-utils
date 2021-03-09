@@ -1,5 +1,7 @@
 set(SOURCES 
-  turbulentKineticEnergy/turbulentKineticEnergy.C
+  resolvedKineticEnergy/resolvedKineticEnergy.C
+  visRatio/visRatio.C
+  M/M.C
   explicitLaplaceFilter/explicitLaplaceFilter.C
   trueExplicitFilter/trueExplicitFilter.cpp
   kBudgetCorrelations/kBudgetCorrelations.C

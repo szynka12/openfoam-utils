@@ -26,7 +26,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "turbulentKineticEnergy.H"
+#include "M.H"
 #include "fvcGrad.H"
 #include "addToRunTimeSelectionTable.H"
 #include "fieldAverageItem.H"
@@ -37,31 +37,23 @@ namespace Foam
 {
 namespace functionObjects
 {
-    defineTypeNameAndDebug(turbulentKineticEnergy, 0);
-    addToRunTimeSelectionTable(functionObject, turbulentKineticEnergy, dictionary);
+    defineTypeNameAndDebug(M, 0);
+    addToRunTimeSelectionTable(functionObject, M, dictionary);
 }
 }
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-bool Foam::functionObjects::turbulentKineticEnergy::calc()
+bool Foam::functionObjects::M::calc()
 {
-    if (foundObject<volVectorField>(fieldName_))
+    if (   foundObject<volScalarField>(k_resolved_name) 
+        && foundObject<volScalarField>(k_name) )
     {
-        const volVectorField& U = lookupObject<volVectorField>(fieldName_);
-        const volVectorField& UMean = lookupObject<volVectorField>("UMean");
-        const volVectorField Uprime(U-UMean);
-        const volScalarField magUprime(Uprime.component(vector::X)*Uprime.component(vector::X) + 
-                                       Uprime.component(vector::Y)*Uprime.component(vector::Y) +
-                                       Uprime.component(vector::Z)*Uprime.component(vector::Z));
+        const auto& k_res = lookupObject<volScalarField>(k_resolved_name);
+        const auto& k = lookupObject<volScalarField>(k_name);
 
-        return store
-        (
-            resultName_,
-            0.5 * magUprime
-        );
-
+        return store( resultName_, k_res / (k + k_res) );
     }
 
     return false;
@@ -70,16 +62,19 @@ bool Foam::functionObjects::turbulentKineticEnergy::calc()
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::functionObjects::turbulentKineticEnergy::turbulentKineticEnergy
+Foam::functionObjects::M::M
 (
     const word& name,
     const Time& runTime,
     const dictionary& dict
 )
 :
-    fieldExpression(name, runTime, dict, "U")
+    fieldExpression(name, runTime, dict,
+        dict.getOrDefault<word>("k", "k"), "M"),
+    k_name(dict.getOrDefault<word>("k", "k")),
+    k_resolved_name(dict.getOrDefault<word>("kRes", "resolvedKineticEnergy"))
 {
-    setResultName(typeName, "U");
+    
 }
 
 

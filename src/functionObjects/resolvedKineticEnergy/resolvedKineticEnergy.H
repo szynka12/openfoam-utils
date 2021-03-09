@@ -25,18 +25,18 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::functionObjects::turbulentKineticEnergy
+    Foam::functionObjects::resolvedKineticEnergy
 
 Group
     grpFieldFunctionObjects
 
 SourceFiles
-    turbulentKineticEnergy.C
+    resolvedKineticEnergy.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef functionObjects_turbulentKineticEnergy_H
-#define functionObjects_turbulentKineticEnergy_H
+#ifndef functionObjects_resolvedKineticEnergy_H
+#define functionObjects_resolvedKineticEnergy_H
 
 #include "fieldExpression.H"
 
@@ -48,29 +48,29 @@ namespace functionObjects
 {
 
 /*---------------------------------------------------------------------------*\
-                          Class turbulentKineticEnergy Declaration
+                          Class resolvedKineticEnergy Declaration
 \*---------------------------------------------------------------------------*/
 
-class turbulentKineticEnergy
+class resolvedKineticEnergy
 :
     public fieldExpression
 {
     // Private Member Functions
 
-        //- Calculate the turbulentKineticEnergy field and return true if successful
+        //- Calculate the resolvedKineticEnergy field and return true if successful
         virtual bool calc();
 
 
 public:
 
     //- Runtime type information
-    TypeName("turbulentKineticEnergy");
+    TypeName("resolvedKineticEnergy");
 
 
     // Constructors
 
         //- Construct from Time and dictionary
-        turbulentKineticEnergy
+        resolvedKineticEnergy
         (
             const word& name,
             const Time& runTime,
@@ -78,14 +78,14 @@ public:
         );
 
         //- No copy construct
-        turbulentKineticEnergy(const turbulentKineticEnergy&) = delete;
+        resolvedKineticEnergy(const resolvedKineticEnergy&) = delete;
 
         //- No copy assignment
-        void operator=(const turbulentKineticEnergy&) = delete;
+        void operator=(const resolvedKineticEnergy&) = delete;
 
 
     //- Destructor
-    virtual ~turbulentKineticEnergy() = default;
+    virtual ~resolvedKineticEnergy() = default;
 };
 
 
