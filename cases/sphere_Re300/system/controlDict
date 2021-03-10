@@ -40,7 +40,7 @@ deltaT          $dt300;
 
 writeControl    adjustableRunTime;
 
-writeInterval   0.01;//$fft;
+writeInterval   $fft;
 
 purgeWrite      3;
 
@@ -58,7 +58,7 @@ runTimeModifiable true;
 
 averageControl
 {
-    timeStart       #eval{0*$fft};
+    timeStart       #eval{5*$fft};
     writeControl    writeTime;
     writeInterval   1;
 }
@@ -75,6 +75,7 @@ functions
   #includeFunc  "yPlus"
   #include      "post/cd"
   #include      "post/average_Up"
+
   #include      "post/UPrim"
   
   resolvedK
@@ -102,6 +103,23 @@ functions
       ${/executeControl};
   }
   
+  fieldAverage2
+  {
+      type            fieldAverage;
+      libs            (fieldFunctionObjects);
+
+      fields
+      (
+          M
+          {
+              mean        yes;
+              prime2Mean  no;
+              base        time;
+          }
+      );
+      ${/averageControl}
+  }
+
   #include "post/ax_sample"
   #include "post/probes" 
   #includeFunc "Lambda2"
