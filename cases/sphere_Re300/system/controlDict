@@ -40,7 +40,7 @@ deltaT          $dt300;
 
 writeControl    adjustableRunTime;
 
-writeInterval   $fft;
+writeInterval   0.01;//$fft;
 
 purgeWrite      3;
 
@@ -58,7 +58,7 @@ runTimeModifiable true;
 
 averageControl
 {
-    timeStart       #eval{10*$fft};
+    timeStart       #eval{0*$fft};
     writeControl    writeTime;
     writeInterval   1;
 }
@@ -103,6 +103,7 @@ functions
   }
   
   #include "post/ax_sample"
+  #include "post/probes" 
   #includeFunc "Lambda2"
   #includeFunc "Q"
 

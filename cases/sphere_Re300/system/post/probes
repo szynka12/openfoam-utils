@@ -1,0 +1,42 @@
+probes_inst
+{
+    type            probes;
+    libs            (sampling);
+
+    // Name of the directory for probe data
+    name            probes;
+
+    // Fields to be probed
+    fields          (p U);
+
+    interpolationScheme cellPoint;
+
+    probeLocations
+    (
+      (1 0.2 0)
+      (1 #eval{ cos(degToRad(67.5))*0.2} #eval{sin(degToRad(67.5))*0.2})
+    );
+
+}
+
+probes_mean
+{
+    type            probes;
+    libs            (sampling);
+
+    // Name of the directory for probe data
+    name            probes;
+
+    // Fields to be probed
+    fields          (UMean UPrime UPrime2Mean);
+
+    interpolationScheme cellPoint;
+
+    probeLocations
+    (
+      (1 0.2 0)
+      (1 #eval{ cos(degToRad(67.5))*0.2} #eval{sin(degToRad(67.5))*0.2})
+    );
+
+    timeStart  $:averageControl.timeStart;
+}
