@@ -1,0 +1,15 @@
+References:
+
+A. G. Tomboulides and S. A. Orszag, “Numerical Investigation of Transitional and 
+Weak Turbulent Flow Past a Sphere,” Journal of Fluid Mechanics, Vol. 416, 2000, 
+pp. 45-73. doi:10.1017/S0022112000008880
+
+
+Datasets scraped (webplotdigitiser) from the paper:
+
+File            |  Description
+--------------------------------------------------------------------------------
+cd.csv          |  Drag coefficient versus time
+UMean_axis.csv  |  Mean axial velocity along the axis of the domain
+UPrime_axis.csv |  Plot of the rms of the axial velocity fluctuations along the 
+                |  axis of the domain
